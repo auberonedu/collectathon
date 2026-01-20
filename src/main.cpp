@@ -75,8 +75,8 @@ int main()
 
         if (bn::keypad::start_pressed())
         {
-          player.set_x(70);
-          player.set_y(10);
+          player.set_x(xCord);
+          player.set_y(yCord);
 
           treasure.set_x(0);
           treasure.set_y(0);
