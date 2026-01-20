@@ -34,8 +34,11 @@ created another if statement in the while true loop and when start is pressed. s
 I changed the code from  stop the player at the screen edges to “teleport the player to the opposite side when they leave the screen.”
 
 
-
 6.Make a speed boost. When the player presses 'A', their speed is increased for a short amount of time. They can only use the speed boost 3 times. They get all speed boosts back when the game is restarted by pressing start.
+
+Created two variables for speed boost and timer. Then created a while true loop and if statement to pick the speed. Then added boost and timer to apply when the game is restarted as well
+
+
 
 ## Brainstorming game ideas
 
