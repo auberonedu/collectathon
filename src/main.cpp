@@ -37,7 +37,7 @@ static constexpr int SCORE_Y = -70;
 int main()
 {
     bn::core::init();
-    bn::backdrop::set_color(bn::color(25,35,45));
+    bn::backdrop::set_color(bn::color(15,0,31));
 
     bn::random rng = bn::random();
 
