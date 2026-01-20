@@ -10,6 +10,7 @@
 #include <bn_string.h>
 
 #include "bn_sprite_items_dot.h"
+#include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
@@ -41,13 +42,11 @@ int main()
     // Will hold the sprites for the score
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
-    
+
     int score = 0;
 
-    bn::sprite_ptr player = bn::sprite_items::dot.create_sprite(50, 50);
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
-
-    
 
     while (true)
     {
