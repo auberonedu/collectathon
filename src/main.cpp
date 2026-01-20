@@ -77,6 +77,17 @@ int main()
             treasure.set_position(dot_X, dot_Y);
             score = 0;
         }
+        // pacman min and max Y wrap
+        {
+            if (player.y() < MIN_Y)
+            {
+                player.set_y(MAX_Y);
+            }
+            if (player.y() > MAX_Y)
+            {
+                player.set_y(MIN_Y);
+            }
+    }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
