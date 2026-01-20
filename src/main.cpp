@@ -14,7 +14,7 @@
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 
-// Pixels / Frame player moves at
+// Pixels / Frame player moves at - Anthony
 static constexpr bn::fixed SPEED = 4;
 
 // Width and height of the the player and treasure bounding boxes
@@ -34,7 +34,7 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
-// Player location
+// Player location - Anthony
 static constexpr bn::fixed PLAYER_Y = 40;
 static constexpr bn::fixed PLAYER_X = 40;
 
@@ -42,7 +42,7 @@ int main()
 {
     bn::core::init();
 
-    //Changed backdrop color
+    //Changed backdrop color - Yousif
     bn::backdrop::set_color(bn::color(15,0,31));
 
     bn::random rng = bn::random();
@@ -97,14 +97,14 @@ int main()
             score++;
         }
 
-        //Player loops through x
+        //Player loops through x - Anthony
         if (player.x() < MIN_X) {
             player.set_x(MAX_X);
         } else if (player.x() > MAX_X) {
             player.set_x(MIN_X);
         }
 
-        //Player loops through y
+        //Player loops through y - Anthony
         if (player.y() < MIN_Y) {
             player.set_y(MAX_Y);
         } else if (player.y() > MAX_Y) {
