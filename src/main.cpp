@@ -47,8 +47,10 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
+    static constexpr int xCord= 70;
+    static constexpr int yCord= 10;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
     while (true)
