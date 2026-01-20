@@ -1,7 +1,3 @@
 {
-    "editor.tabCompletion": "on",
-    "editor.quickSuggestions": {
-        "comments": "on",
-        "strings": "on"
-    }
+    "editor.tabCompletion": "off"
 }
