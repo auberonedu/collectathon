@@ -8,6 +8,8 @@
 #include <bn_sprite_text_generator.h>
 #include <bn_size.h>
 #include <bn_string.h>
+#include <bn_backdrop.h>
+#include <bn_color.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -33,9 +35,13 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+
 int main()
 {
     bn::core::init();
+
+    // change backdrop color
+    bn::backdrop::set_color(bn::color(20, 20, 31));
 
     bn::random rng = bn::random();
 
