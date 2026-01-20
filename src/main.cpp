@@ -47,30 +47,56 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
-    static constexpr int xCord= 70;
-    static constexpr int yCord= 10;
+    static constexpr int xCord = 70;
+    static constexpr int yCord = 10;
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
+    int boostDuration = 60;  // How long the boost will last in frames(?)
+    int boostTime = 0;       // Decreases while boosting
+    int boostCount = 3;      // How many boosts remain
+    int boostMultiplier = 2; // How much faster the sphere moves
+
+    int currentSpeedMultiplier = 1; // The Current multiplier for speed, gets changed to 2 when boosting.
+
     while (true)
     {
+        // Speed boost
+        if (bn::keypad::a_pressed() && boostCount > 0)
+        {
+            if (boostCount > 0)
+            {
+                boostCount--;
+                boostTime = boostDuration;
+                currentSpeedMultiplier = boostMultiplier;
+            }
+        }
+        if (boostTime > 0)
+        {
+            boostTime--;
+        }
+        else
+        {
+            currentSpeedMultiplier = 1;
+        }
+
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED);
+            player.set_x(player.x() - SPEED * currentSpeedMultiplier);
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED);
+            player.set_x(player.x() + SPEED * currentSpeedMultiplier);
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED);
+            player.set_y(player.y() - SPEED * currentSpeedMultiplier);
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED);
+            player.set_y(player.y() + SPEED * currentSpeedMultiplier);
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
