@@ -79,7 +79,7 @@ int main()
           player.set_y(10);
 
           treasure.set_x(0);
-          player.set_y(0);
+          treasure.set_y(0);
 
           score = 0;
         }
