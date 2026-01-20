@@ -20,6 +20,9 @@ Change the speed of the player
 Change background color
 Change the starting position of the player and dot, making new constexpr for starting X and Y of each 
 make it so when the player hits start, the page restarts( the player and treasure are sent back to their initial positions and the score resets to 0)
+make it so player loops when going around the screen
+give player speed boost when pressing A
+
 
 
 ## Brainstorming game ideas
