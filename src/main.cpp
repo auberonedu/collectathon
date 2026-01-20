@@ -50,7 +50,7 @@ int main()
 
     static constexpr int dot_X = 50;
     static constexpr int dot_Y = -20;
-
+    int boost = 0;
     while (true)
     {
         // Move player with d-pad
@@ -77,18 +77,20 @@ int main()
             treasure.set_position(dot_X, dot_Y);
             score = 0;
         }
-        // pacman min and max Y wrap
+
+        while (bn::keypad::a_pressed())
         {
-            if (player.y() < MIN_Y)
+            if (boost <= 3)
             {
-                player.set_y(MAX_Y);
+                player.set_x(player.x() + SPEED * 2);
+                player.set_y(player.y() + SPEED * 2);
             }
-            if (player.y() > MAX_Y)
+            else
             {
-                player.set_y(MIN_Y);
+                player.set_x(player.x() + SPEED);
+                player.set_y(player.y() + SPEED);
             }
-    }
-}
+        }
 
         // loop for min
         if (player.x() < MIN_X)
@@ -100,39 +102,39 @@ int main()
                 {
                     player.set_x(MIN_X);
                 }
-
-                // The bounding boxes of the player and treasure, snapped to integer pixels
-                bn::rect player_rect = bn::rect(player.x().round_integer(),
-                                                player.y().round_integer(),
-                                                PLAYER_SIZE.width(),
-                                                PLAYER_SIZE.height());
-                bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
-                                                  treasure.y().round_integer(),
-                                                  TREASURE_SIZE.width(),
-                                                  TREASURE_SIZE.height());
-
-                // If the bounding boxes overlap, set the treasure to a new location an increase score
-                if (player_rect.intersects(treasure_rect))
-                {
-                    // Jump to any random point in the screen
-                    int new_x = rng.get_int(MIN_X, MAX_X);
-                    int new_y = rng.get_int(MIN_Y, MAX_Y);
-                    treasure.set_position(new_x, new_y);
-
-                    score++;
-                }
-
-                // Update score display
-                bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
-                score_sprites.clear();
-                text_generator.generate(SCORE_X, SCORE_Y,
-                                        score_string,
-                                        score_sprites);
-
-                // Update RNG seed every frame so we don't get the same sequence of positions every time
-                rng.update();
-
-                bn::core::update();
             }
+
+            // The bounding boxes of the player and treasure, snapped to integer pixels
+            bn::rect player_rect = bn::rect(player.x().round_integer(),
+                                            player.y().round_integer(),
+                                            PLAYER_SIZE.width(),
+                                            PLAYER_SIZE.height());
+            bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
+                                              treasure.y().round_integer(),
+                                              TREASURE_SIZE.width(),
+                                              TREASURE_SIZE.height());
+
+            // If the bounding boxes overlap, set the treasure to a new location an increase score
+            if (player_rect.intersects(treasure_rect))
+            {
+                // Jump to any random point in the screen
+                int new_x = rng.get_int(MIN_X, MAX_X);
+                int new_y = rng.get_int(MIN_Y, MAX_Y);
+                treasure.set_position(new_x, new_y);
+
+                score++;
+            }
+
+            // Update score display
+            bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
+            score_sprites.clear();
+            text_generator.generate(SCORE_X, SCORE_Y,
+                                    score_string,
+                                    score_sprites);
+
+            // Update RNG seed every frame so we don't get the same sequence of positions every time
+            rng.update();
+
+            bn::core::update();
         }
     }
