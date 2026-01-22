@@ -13,6 +13,8 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+#include <bn_backdrop.h>
+#include <bn_color.h>
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 1.25;
@@ -38,6 +40,8 @@ static constexpr int SCORE_Y = -70;
 int main()
 {
     bn::core::init();
+
+    bn::backdrop::set_color(bn::color(20, 0, 0));
 
     bn::random rng = bn::random();
 
