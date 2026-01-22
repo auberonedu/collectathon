@@ -101,7 +101,7 @@ int main()
         if(bn::keypad::start_pressed()){
             score = 0;
             treasure.set_position(0,0);
-            player.set_position(-50,50);
+            player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
 
