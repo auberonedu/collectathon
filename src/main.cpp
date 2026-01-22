@@ -41,6 +41,8 @@ static constexpr int SCORE_Y = -70;
 int main()
 {
     bn::core::init();
+    // #1
+    bn::backdrop::set_color(bn::color(0, 0, 31));
 
     bn::random rng = bn::random();
 
@@ -55,7 +57,6 @@ int main()
 
     while (true)
     {
-        bn::backdrop::set_color(bn::color(0, 0, 31));
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
