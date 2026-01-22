@@ -21,11 +21,11 @@ Display boundaries are recored in `MIN_Y`,`MAX_Y`,`MIN_X`,and `MAX_X`.
 
 3. Change the starting position of the player and dot, making new static constexpr for starting X and Y of each
 
-4. Make it so when the player hits start, the game restarts (the player and treasure are sent back to their initial positions and the score is reset to zero)
+4. To reset the game we just have to put an `if` start pressed, then set `score` to 0, set `boosts_left` to 3 and set `player` x and y to starting and set `treasure` x and y to starting aswell.
 
 5. For the player to loop around the screen when it gets past the edge we would need to make an `if` in the `while` loop so that if the x or y of the player is greater or less than the max or min then change the x/y to the opposite wall.
 
-6. For the speed post we need to add a `duration` variable and a `boosts_left` variable. We need to add a `if` a is pressed, then drop the `boosts_left` by 1 and increase `duration` to the desired boost length.  then add `if(duration > 0)` then we have the boost applied and we drop the duration by 1 for the frame that just went by. `else` set the speed back to normal. 
+6. For the speed boost we need to add a `duration` variable and a `boosts_left` variable. We need to add a `if` a is pressed, then drop the `boosts_left` by 1 and increase `duration` to the desired boost length.  then add `if(duration > 0)` then we have the boost applied and we drop the duration by 1 for the frame that just went by. `else` set the speed back to normal. 
 ## Brainstorming game ideas
 
 ## Plan for implementing game
