@@ -16,7 +16,7 @@
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = 1;
+static constexpr bn::fixed SPEED = 2;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -35,6 +35,13 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+// Start location of player sprite
+static constexpr int startPosX = 0;
+static constexpr int startPosY = 0;
+int boost = 0;
+static constexpr int boostSpeedMax = 10;
+static constexpr int useableBoostsMax = 3;
+int curBoosts = useableBoostsMax;
 
 int main()
 {
@@ -51,52 +58,79 @@ int main()
 
     int score = 0;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
+    // bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(startPosX, startPosY); // KJeans Changed
+
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
     while (true)
+
     {
+        // KJans added speed boost;
+        if (bn::keypad::a_pressed())
+        {
+            if (boost == 0 && curBoosts > 0)
+            {
+                boost = boostSpeedMax;
+            }
+        }
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED);
+            player.set_x(player.x() - (SPEED + boost));
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED);
+            player.set_x(player.x() + (SPEED + boost));
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED);
+            player.set_y(player.y() - (SPEED + boost));
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED);
+            player.set_y(player.y() + (SPEED + boost));
         }
 
-        //loop the plaer if they go off screen
+        // Boost must adjust value after movement event occurs
+        if (boost > 0)
+        {
+            boost--; // decrement boost per frame
+            if (boost == 0)
+            {
+                curBoosts--;
+            }
+        }
 
-        //x-axis
-        if(player.x() >= 120){
+        // loop the plaer if they go off screen
+
+        // x-axis
+        if (player.x() >= 120)
+        {
             player.set_x(-120);
         }
-        else if(player.x() <= -120){
+        else if (player.x() <= -120)
+        {
             player.set_x(120);
         }
 
-        //y-axis
-        if(player.y() >= 80){
+        // y-axis
+        if (player.y() >= 80)
+        {
             player.set_y(-80);
         }
-        else if(player.y() <= -80){
+        else if (player.y() <= -80)
+        {
             player.set_y(80);
         }
 
-        //add restart button
-        if(bn::keypad::start_pressed()){
-            treasure.set_position(0,0);
-            player.set_position(-50, 50);
+        // add restart button
+        if (bn::keypad::start_pressed())
+        {
+            treasure.set_position(0, 0);
+            player.set_position(startPosX, startPosY);
             score = 0;
+            curBoosts = useableBoostsMax; // reset boosts
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -130,8 +164,8 @@ int main()
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
 
-        //logs player position each update
-        //BN_LOG("(", player.x(), ",", player.y(), ")");
+        // logs player position each update
+        // BN_LOG("(", player.x(), ",", player.y(), ")");
 
         bn::core::update();
     }
