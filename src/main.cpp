@@ -92,6 +92,14 @@ int main()
 
             score++;
         }
+        
+        // On start press, the game resets and puts everything back to initial state
+        if(bn::keypad::start_pressed()){
+            score = 0;
+            treasure.set_position(0,0);
+            player.set_position(-50,50);
+        }
+
 
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
