@@ -100,6 +100,14 @@ int main()
             player.set_y(player.y() + SPEED);
         }
 
+        // Send player to the other side of the screen if the player crosses over the edge
+        if (player.x() < MIN_X || player.x() > MAX_X) {
+            player.set_x(-player.x());
+        }
+        if (player.y() < MIN_Y || player.y() > MAX_Y) {
+            player.set_y(-player.y());
+        }
+
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
