@@ -86,6 +86,7 @@ int main()
       player.set_position(-50, 50);
       treasure.set_position(0, 0);
       score_sprites.clear();
+      boost_left = 3;
 
     }
         // Move player with d-pad
