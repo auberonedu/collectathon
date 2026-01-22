@@ -12,6 +12,8 @@ Player and treasure sizes are conrolled by `PLAYER_SIZE` and `TREASURE_SIZE`.
 
 Display boundaries are recored in `MIN_Y`,`MAX_Y`,`MIN_X`,and `MAX_X`.
 
+`player` is at `(-50, 50)` and `treasure` is at `(0, 0)` for the starting positions.
+
 ## Planning required changes
 
 ## Brainstorming game ideas
