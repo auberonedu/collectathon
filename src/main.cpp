@@ -8,13 +8,15 @@
 #include <bn_sprite_text_generator.h>
 #include <bn_size.h>
 #include <bn_string.h>
+#include <bn_math.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = .5;
+static constexpr bn::fixed SPEED = 1.25;
+static constexpr bn::fixed DIAG_SPEED = SPEED * bn::degrees_cos(45);
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -51,19 +53,39 @@ int main()
     while (true)
     {
         // Move player with d-pad
-        if (bn::keypad::left_held())
+
+        // Multikey (nerf to diagonal movement because its faster)
+        if (bn::keypad::left_held() && bn::keypad::up_held()) {
+            player.set_x(player.x() - DIAG_SPEED);
+            player.set_y(player.y() - DIAG_SPEED);
+        }
+        else if (bn::keypad::right_held() && bn::keypad::up_held()) {
+            player.set_x(player.x() + DIAG_SPEED);
+            player.set_y(player.y() - DIAG_SPEED);
+        }
+        else if (bn::keypad::left_held() && bn::keypad::down_held()) {
+            player.set_x(player.x() - DIAG_SPEED);
+            player.set_y(player.y() + DIAG_SPEED);
+        }
+        else if (bn::keypad::right_held() && bn::keypad::down_held()) {
+            player.set_x(player.x() + DIAG_SPEED);
+            player.set_y(player.y() + DIAG_SPEED);
+        }
+
+        // Single key presses
+        else if (bn::keypad::left_held())
         {
             player.set_x(player.x() - SPEED);
         }
-        if (bn::keypad::right_held())
+        else if (bn::keypad::right_held())
         {
             player.set_x(player.x() + SPEED);
         }
-        if (bn::keypad::up_held())
+        else if (bn::keypad::up_held())
         {
             player.set_y(player.y() - SPEED);
         }
-        if (bn::keypad::down_held())
+        else if (bn::keypad::down_held())
         {
             player.set_y(player.y() + SPEED);
         }
