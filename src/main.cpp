@@ -20,6 +20,28 @@
 static constexpr bn::fixed SPEED = 1.25;
 static constexpr bn::fixed DIAG_SPEED = SPEED * bn::degrees_cos(45);
 
+// Boosted speed 
+
+static constexpr bn:fixed BOOST_SPEED = SPEED * 2;
+
+//Boost boundaries
+
+static constexpr int MAX_BOOSTS = 3;
+static constexpr int BOOST_DURATION_FRAMES = 120;
+
+//Variables for speed boost 
+int player_speed = SPEED;
+
+bn_fixed(payer_speed);
+
+int boosts_left = MAX_BOOSTS;
+
+bn_fixed(boosts_left);
+
+int boost_timer = 0;
+bool boost_active = false;
+
+
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
@@ -99,6 +121,25 @@ int main()
         {
             player.set_y(player.y() + SPEED);
         }
+        //Boost activation 
+        if(bn::keypad::a_pressed() && boosts_left > 0 && !boost_active)
+        {
+            boost_active = true;
+            boost_timer = BOOST_DURATION_FRAMES;
+            player_speed = BOOST_SPEED;
+            boosts_left--;
+        }
+        //When boost is active 
+        if(boost_active)
+        {
+            --boost_timer;
+
+            if(boost_timer <= 0)
+            {
+                boost_active = false;
+                player_speed = SPEED;
+            }
+        }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
@@ -129,6 +170,12 @@ int main()
 
             // Reset score
             score = 0;
+
+            //Reset boost 
+            boosts_left = MAX_BOOSTS;
+            boost_active = false;
+            boost_timer = 0;
+            player_speed = SPEED;
         }
 
         // Update score display
