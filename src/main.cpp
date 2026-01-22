@@ -43,7 +43,6 @@ int main()
     bn::core::init();
     // #1
     bn::backdrop::set_color(bn::color(0, 0, 31));
-    
 
     bn::random rng = bn::random();
 
@@ -95,6 +94,13 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+        }
+        // resets the score to 0
+        if (bn::keypad::start_pressed())
+        {
+            score = 0;
+            player.set_x(0);
+            player.set_y(0);
         }
 
         // Update score display
