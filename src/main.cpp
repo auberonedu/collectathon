@@ -131,6 +131,16 @@ int main()
             player.set_y(MIN_Y);
         }
 
+        // Speed boost set to A button
+        // We need three new variables here:
+        // * boosts_left: we start with 3 and tick down with each use
+        // * boost_frames_left: we start with 180 upon activation and tick down with each frame
+        // * is_boosting: boolean that requires the boost_frames_left to be greater than 0
+        // (we need this so it's not possible to use all your boosts by accident at once)
+        // Other things:
+        // * We need to multiply SPEED to create the boost
+        // * `if (bn::keypad::a_pressed())` is how we start boosting behavior
+
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
         score_sprites.clear();
