@@ -43,6 +43,11 @@ static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
 
+// Speed variables
+static constexpr int BOOST_FRAMES = 180;
+static constexpr int MAX_BOOSTS = 3;
+static bool is_boosting = false;
+
 int main()
 {
     bn::core::init();
@@ -58,8 +63,8 @@ int main()
     int score = 0;
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, 
-        TREASURE_START_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X,
+                                                                  TREASURE_START_Y);
 
     while (true)
     {
@@ -101,14 +106,45 @@ int main()
 
             score++;
         }
-        
+
         // On start press, the game resets and puts everything back to initial state
-        if(bn::keypad::start_pressed()) {
+        if (bn::keypad::start_pressed())
+        {
             score = 0;
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
+               // Implement loop behavior on screen
+        if (player.x() <= MIN_X && bn::keypad::left_held())
+        {
+            player.set_x(MAX_X);
+        }
+
+        if (player.x() >= MAX_X && bn::keypad::right_held())
+        {
+            player.set_x(MIN_X);
+        }
+
+        if (player.y() <= MIN_Y && bn::keypad::up_held())
+        {
+            player.set_y(MAX_Y);
+        }
+
+        if (player.y() >= MAX_Y && bn::keypad::down_held())
+        {
+            player.set_y(MIN_Y);
+        }
+
+        // Speed boost set to A button
+        // We need three new variables here:
+        // * boosts_left: we start with 3 and tick down with each use
+        // * boost_frames_left: we start with 180 upon activation and tick down with each frame
+        // * is_boosting: boolean that requires the boost_frames_left to be greater than 0
+        // (we need this so it's not possible to use all your boosts by accident at once)
+        // Other things:
+        // * We need to multiply SPEED to create the boost
+        // * `if (bn::keypad::a_pressed())` is how we start boosting behavior
 
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
