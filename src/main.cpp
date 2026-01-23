@@ -72,6 +72,8 @@ int main()
         // Game Reset
         if (bn::keypad::start_pressed())
         {
+            boostCount = 3;
+            duration = 0;
             score = 0;
             player.set_x(PLAYER_START_X);
             player.set_y(PLAYER_START_Y);
@@ -135,16 +137,16 @@ int main()
             player.set_y(MAX_Y);
         }
 
-        if (duration >= 0) {
-            SPEED = 5;
+        if (duration > 0) {
+            SPEED = 3;
             duration--;
-        }
-        if (bn::keypad::a_pressed){
-            duration = 60;
-            boostCount--;
-        }
-        else {
+        } else {
             SPEED = 1;
+        }
+
+        if (bn::keypad::a_pressed() && boostCount > 0){
+            duration = 180;
+            boostCount--;
         }
 
         // Update score display
