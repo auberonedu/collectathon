@@ -58,8 +58,8 @@ int main()
     int score = 0;
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, 
-        TREASURE_START_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X,
+                                                                  TREASURE_START_Y);
 
     while (true)
     {
@@ -101,14 +101,35 @@ int main()
 
             score++;
         }
-        
+
         // On start press, the game resets and puts everything back to initial state
-        if(bn::keypad::start_pressed()) {
+        if (bn::keypad::start_pressed())
+        {
             score = 0;
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
+        // Implement loop behavior on screen
+        if (player.x() <= MIN_X && bn::keypad::left_held())
+        {
+            player.set_x(MAX_X);
+        }
+
+        if (player.x() >= MAX_X && bn::keypad::right_held())
+        {
+            player.set_x(MIN_X);
+        }
+
+        if (player.y() <= MIN_Y && bn::keypad::up_held())
+        {
+            player.set_y(MAX_Y);
+        }
+
+        if (player.y() >= MAX_Y && bn::keypad::down_held())
+        {
+            player.set_y(MIN_Y);
+        }
 
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
