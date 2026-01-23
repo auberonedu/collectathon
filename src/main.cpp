@@ -39,6 +39,10 @@ static constexpr int SCORE_Y = -70;
 static constexpr int PLAYER_START_X = -50;
 static constexpr int PLAYER_START_Y = 50;
 
+// Treasure location
+static constexpr int TREASURE_START_X = 0;
+static constexpr int TREASURE_START_Y = 0;
+
 int main()
 {
     bn::core::init();
@@ -54,7 +58,8 @@ int main()
     int score = 0;
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
+    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, 
+        TREASURE_START_Y);
 
     while (true)
     {
@@ -98,9 +103,9 @@ int main()
         }
         
         // On start press, the game resets and puts everything back to initial state
-        if(bn::keypad::start_pressed()){
+        if(bn::keypad::start_pressed()) {
             score = 0;
-            treasure.set_position(0,0);
+            treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
