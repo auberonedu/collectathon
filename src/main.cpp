@@ -36,10 +36,8 @@ static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
 // Speed boost parameters
-static constexpr int BOOST_MULTIPLIER = 30;
 static int BOOSTS_LEFT = 3;
-static int BOOST_DURATION_FRAMES = 180;
-static bool is_boosting = false;
+static int BOOST_DURATION_FRAMES = 0;
 
 // Player location
 static constexpr int PLAYER_START_X = -50;
@@ -69,22 +67,42 @@ int main()
 
     while (true)
     {
+        bn::fixed speed = SPEED;
+
+        // Speed boost set to A button
+        if (bn::keypad::a_pressed() && BOOSTS_LEFT > 0 && BOOST_DURATION_FRAMES <= 0)
+        {
+            BOOST_DURATION_FRAMES = 180;
+            BOOSTS_LEFT--;
+        }
+
+        if (BOOST_DURATION_FRAMES > 0)
+        {
+            speed = SPEED * 3;
+            BOOST_DURATION_FRAMES--;
+        }
+
+        else
+        {
+            speed = SPEED;
+        }
+
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED);
+            player.set_x(player.x() - speed);
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED);
+            player.set_x(player.x() + speed);
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED);
+            player.set_y(player.y() - speed);
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED);
+            player.set_y(player.y() + speed);
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -107,6 +125,7 @@ int main()
 
             score++;
         }
+
         // On start press, the game resets and puts everything back to initial state
         if (bn::keypad::start_pressed())
         {
@@ -135,38 +154,6 @@ int main()
         if (player.y() >= MAX_Y && bn::keypad::down_held())
         {
             player.set_y(MIN_Y);
-        }
-
-        // Speed boost set to A button
-        // We need three new variables here:
-        // * boosts_left: we start with 3 and tick down with each use
-        // * boost_frames_left: we start with 180 upon activation and tick down with each frame
-        // * is_boosting: boolean that requires the boost_frames_left to be greater than 0
-        // (we need this so it's not possible to use all your boosts by accident at once)
-        // Other things:
-        // * We need to multiply SPEED to create the boost
-        // * `if (bn::keypad::a_pressed())` is how we start boosting behavior
-
-        if (bn::keypad::a_pressed() && BOOSTS_LEFT > 0 && !is_boosting)
-        {
-            BN_LOG("Speed activated!");
-            is_boosting = true;
-            BOOSTS_LEFT--;
-            BN_LOG(BOOST_DURATION_FRAMES);
-        }
-        while (is_boosting)
-        {
-            BOOST_DURATION_FRAMES--;
-            break;
-        }
-
-        if (BOOST_DURATION_FRAMES == 0)
-        {
-            BN_LOG("Speed boost ended!");
-            BN_LOG("Boosts left: ", BOOSTS_LEFT);
-            BN_LOG(BOOST_DURATION_FRAMES);
-            BOOST_DURATION_FRAMES = 180;
-            is_boosting = false;
         }
 
         // Update score display
