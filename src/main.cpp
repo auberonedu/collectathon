@@ -35,6 +35,12 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+// Speed boost parameters
+static constexpr int BOOST_MULTIPLIER = 30;
+static int BOOSTS_LEFT = 3;
+static int BOOST_DURATION_FRAMES = 180;
+static bool is_boosting = false;
+
 // Player location
 static constexpr int PLAYER_START_X = -50;
 static constexpr int PLAYER_START_Y = 50;
@@ -42,11 +48,6 @@ static constexpr int PLAYER_START_Y = 50;
 // Treasure location
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
-
-// Speed variables
-static constexpr int BOOST_FRAMES = 180;
-static constexpr int MAX_BOOSTS = 3;
-static bool is_boosting = false;
 
 int main()
 {
@@ -106,20 +107,16 @@ int main()
 
             score++;
         }
-
         // On start press, the game resets and puts everything back to initial state
         if (bn::keypad::start_pressed())
         {
             score = 0;
+            BOOSTS_LEFT = 3;
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
-<<<<<<< HEAD
-               // Implement loop behavior on screen
-=======
         // Implement loop behavior on screen
->>>>>>> 08c8c0e2080224203618f2e3adceb7cae9a8dc49
         if (player.x() <= MIN_X && bn::keypad::left_held())
         {
             player.set_x(MAX_X);
@@ -149,6 +146,28 @@ int main()
         // Other things:
         // * We need to multiply SPEED to create the boost
         // * `if (bn::keypad::a_pressed())` is how we start boosting behavior
+
+        if (bn::keypad::a_pressed() && BOOSTS_LEFT > 0 && !is_boosting)
+        {
+            BN_LOG("Speed activated!");
+            is_boosting = true;
+            BOOSTS_LEFT--;
+            BN_LOG(BOOST_DURATION_FRAMES);
+        }
+        while (is_boosting)
+        {
+            BOOST_DURATION_FRAMES--;
+            break;
+        }
+
+        if (BOOST_DURATION_FRAMES == 0)
+        {
+            BN_LOG("Speed boost ended!");
+            BN_LOG("Boosts left: ", BOOSTS_LEFT);
+            BN_LOG(BOOST_DURATION_FRAMES);
+            BOOST_DURATION_FRAMES = 180;
+            is_boosting = false;
+        }
 
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
