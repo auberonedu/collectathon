@@ -115,7 +115,11 @@ int main()
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
         }
 
+<<<<<<< HEAD
                // Implement loop behavior on screen
+=======
+        // Implement loop behavior on screen
+>>>>>>> 08c8c0e2080224203618f2e3adceb7cae9a8dc49
         if (player.x() <= MIN_X && bn::keypad::left_held())
         {
             player.set_x(MAX_X);
