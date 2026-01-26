@@ -52,6 +52,8 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
+
+    // BOST VERIABLES
     int Speed_boost = 3;   // AMOUNT OF BOOSTS
     int BOOST = 0;         // INCREASE IN SPEED
     int boost_counter = 0; // TIME BEFORE BOOST ENDS
