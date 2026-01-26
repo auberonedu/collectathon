@@ -116,9 +116,9 @@ int main()
         if (bn::keypad::left_held())
         {
             player.set_x(player.x() - current_speed);
+        }
         if (bn::keypad::right_held())
         {
-
           player.set_x(player.x() + current_speed);
         }
         if (bn::keypad::up_held())
@@ -174,5 +174,4 @@ int main()
 
         bn::core::update();
     }
-}
 }
