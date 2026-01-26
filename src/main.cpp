@@ -49,7 +49,7 @@ int main()
 {
     bn::core::init();
     // bg color
-    bn::bg_palettes::set_transparent_color(bn::color(7, 2, 8));
+    bn::bg_palettes::set_transparent_color(bn::color(7, 2, 8)); // dark blue
 
     bn::random rng = bn::random();
 
