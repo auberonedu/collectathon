@@ -43,7 +43,7 @@ static constexpr int SCORE_Y = -70;
 // Boost settings
 static constexpr int BOOST_MAX_USES = 3;
 static constexpr int BOOST_DURATION_FRAMES = 60;
-static constexpr bn::fixed BOOST_SPEED = 4;
+static constexpr bn::fixed BOOST_SPEED = 10;
 
 int main()
 {
