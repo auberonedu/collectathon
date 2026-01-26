@@ -21,6 +21,10 @@ static constexpr bn::fixed SPEED = 1.5;
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
 
+// starting postion
+static constexpr int START_X = 0;
+static constexpr int START_Y = 0;
+
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
 static constexpr int MAX_Y = bn::display::height() / 2;
@@ -49,7 +53,7 @@ int main()
 
     int score = 0;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(START_X, START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
     while (true)
