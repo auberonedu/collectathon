@@ -38,6 +38,7 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+
 int main()
 {
     bn::core::init();
@@ -88,8 +89,7 @@ int main()
             player.set_x(-player.x());
         }
 
-        if (player.y() <= MIN_Y || player.y() >= MAX_Y)
-        {
+        if(player.y() <= MIN_Y || player.y() >= MAX_Y){
             player.set_y(-player.y());
         }
 
