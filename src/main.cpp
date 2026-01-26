@@ -77,6 +77,15 @@ int main()
             player.set_y(player.y() + SPEED);
         }
 
+        // Places the player on the other side of the screen
+        if(player.x() == MIN_X || player.x() == MAX_X){
+            player.set_x(-player.x());
+        }
+
+        if(player.y() <= MIN_Y || player.y() >= MAX_Y){
+            player.set_y(-player.y());
+        }
+
         // Restart the game when pressed START
         if (bn::keypad::start_pressed())
         {
