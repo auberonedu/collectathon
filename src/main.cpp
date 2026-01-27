@@ -15,6 +15,9 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+#include "bn_sprite_items_enemy.h"
+#include "bn_sprite_items_megadot.h"
+
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
@@ -41,7 +44,7 @@ int main()
 {
     bn::core::init();
 
-    bn::backdrop::set_color(bn::color(20, 15, 15));
+    bn::backdrop::set_color(bn::color(21, 15, 15));
     bn::random rng = bn::random();
 
     // Will hold the sprites for the score
@@ -54,6 +57,10 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
+    bn::sprite_ptr enemy = bn::sprite_items::enemy.create_sprite(10,100);
+
+
+    bn::sprite_ptr treasureMega = bn::sprite_items::megadot.create_sprite(0, 0);
 
     int boostDuration = 60;  // How long the boost will last in frames(?)
     int boostTime = 0;       // Decreases while boosting
