@@ -151,6 +151,12 @@ int main()
                                 score_string,
                                 score_sprites);
 
+        // Display boost left
+        bn::string<2> boost_string = bn::to_string<1>(boost_left); // changed int to string
+        bn::vector<bn::sprite_ptr, 2> boost_sprites = {}; // make a box for the boost number
+        text_generator.generate(-80, -70,
+                                boost_string,
+                                boost_sprites); // display boost number (boost string at -80, -70 inside boost_sprites(box))
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
 
