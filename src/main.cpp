@@ -16,7 +16,7 @@
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = 1.5;
+static constexpr bn::fixed SPEED = 2;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -84,14 +84,29 @@ int main()
             player.set_y(player.y() + SPEED + BOOST);
         }
 
-        // Places the player on the other side of the screen
-        if (player.x() <= MIN_X || player.x() >= MAX_X)
-        {
-            player.set_x(-player.x());
-        }
+        // // Places the player on the other side of the screen
+        // if (player.x() <= MIN_X || player.x() >= MAX_X)
+        // {
+        //     player.set_x(-player.x());
+        // }
 
-        if(player.y() <= MIN_Y || player.y() >= MAX_Y){
-            player.set_y(-player.y());
+        // if(player.y() <= MIN_Y || player.y() >= MAX_Y){
+        //     player.set_y(-player.y());
+        // }
+
+        // Touching border resets game 
+        if(player.x() == MIN_X || player.x() == MAX_X || player.y() == MIN_Y || player.y() == MAX_Y){
+            score = 0;
+            player.set_x(PLAYER_X);
+            player.set_y(PLAYER_Y);
+
+            //places orbs in random spots
+            int new_x = rng.get_int(MIN_X, MAX_X);
+            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            treasure.set_position(new_x, new_y);
+
+            //Resets boosts
+            Speed_boost = 3;
         }
 
         // Restart the game when pressed START
@@ -105,6 +120,10 @@ int main()
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
+
+            //resets boosts
+            Speed_boost = 3;
+
         }
 
         // BOOST
