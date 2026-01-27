@@ -10,8 +10,8 @@
 #include <bn_string.h>
 #include <bn_backdrop.h>
 #include <bn_vector.h>
-#include <bn_sound_item.h>
-#include <bn_audio.h>
+#include <bn_music.h>
+#include <bn_music_items.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -207,7 +207,8 @@ int main()
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
 
-            // bn::sound_item::alert.play();
+            //plays a sound when overlaping with treasure
+            bn::music_items::alert.play();
             score++;
         }
 
