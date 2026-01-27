@@ -52,3 +52,5 @@ Created two variables for speed boost and timer. Then created a while true loop 
 
 ## Plan for implementing game
 
+
+
