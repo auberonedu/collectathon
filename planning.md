@@ -34,7 +34,7 @@ Make a speed boost
 
 ## Brainstorming game ideas
 
-- "Snake" game, eating an orb makes a trail
+- If the player touches the border the game restarts
 
 - Add sound effect when scoring a point
 
@@ -43,3 +43,11 @@ Make a speed boost
 
 ## Plan for implementing game
 
+ - Making it where it hits the border you lose the game
+    -Restart the game once you hit the border (MIN/MAX X/Y values)
+
+-Enemy Slowly Folowing you around
+    -Enemy is helf the speed, if you hit the enemy you lose
+    -algorithm for the enemy
+        -get the players x and y
+        -add 1 in the direction of the player on borth x and you
