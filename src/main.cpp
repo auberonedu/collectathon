@@ -60,8 +60,6 @@ int main()
     bn::sprite_ptr enemy = bn::sprite_items::enemy.create_sprite(10,100);
 
 
-    bn::sprite_ptr treasureMega = bn::sprite_items::megadot.create_sprite(0, 0);
-
     int boostDuration = 60;  // How long the boost will last in frames(?)
     int boostTime = 0;       // Decreases while boosting
     int boostCount = 3;      // How many boosts remain
@@ -194,6 +192,9 @@ int main()
                                 score_string,
                                 score_sprites);
 
+        if (score == 10) {
+
+        }
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
 
