@@ -8,6 +8,7 @@
 #include <bn_sprite_text_generator.h>
 #include <bn_size.h>
 #include <bn_string.h>
+#include <bn_backdrop.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -26,9 +27,9 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
-// New starting positions stored as constant variables rather than literals
-static constexpr int PLAYER_START_X = -20;
-static constexpr int PLAYER_START_Y = 20;
+// new starting location for treasure and player
+static constexpr int PLAYER_START_X = -50;
+static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
 
@@ -53,6 +54,9 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
+
+    // Backdrop Color
+    bn::backdrop::set_color(bn::color(30, 0, 30));
 
     while (true)
     {
