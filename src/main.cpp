@@ -14,17 +14,23 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+#include "bn_sprite_items_enemy.h"
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
+static constexpr bn::fixed ENEMY_SPEED = 1;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size ENEMY_SIZE = {16, 16};
 
 // Player starting location
 static constexpr int PLAYER_X = 0;
 static constexpr int PLAYER_Y = 0;
+// Enemy start locatin
+static constexpr int ENEMY_X = -40;
+static constexpr int ENEMY_Y = -40;
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -61,6 +67,8 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
 
+    bn::sprite_ptr enemy = bn::sprite_items::enemy.create_sprite(ENEMY_X, ENEMY_Y);
+
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
     while (true)
@@ -93,21 +101,23 @@ int main()
         //     player.set_y(-player.y());
         // }
 
-        // Touching border resets game 
-        if(player.x() == MIN_X || player.x() == MAX_X || player.y() == MIN_Y || player.y() == MAX_Y){
+        // Touching border resets game
+        if (player.x() == MIN_X || player.x() == MAX_X || player.y() == MIN_Y || player.y() == MAX_Y)
+        {
             score = 0;
             player.set_x(PLAYER_X);
             player.set_y(PLAYER_Y);
+            enemy.set_x(ENEMY_X);
+            enemy.set_y(ENEMY_Y);
 
-            //places orbs in random spots
+            // places orbs in random spots
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
 
-            //Resets boosts
+            // Resets boosts
             Speed_boost = 3;
-
-
+        }
         // Restart the game when pressed START
         if (bn::keypad::start_pressed())
         {
@@ -120,9 +130,8 @@ int main()
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
 
-            //resets boosts
+            // resets boosts
             Speed_boost = 3;
-
         }
 
         // BOOST
@@ -141,6 +150,24 @@ int main()
             BOOST = 0;
         }
 
+        // ENEMY MOVEMENT
+        if (enemy.y() < player.y())
+        {
+            enemy.set_y(enemy.y() + ENEMY_SPEED);
+        }
+        else
+        {
+            enemy.set_y(enemy.y() - ENEMY_SPEED);
+        }
+        if (enemy.x() < player.x())
+        {
+            enemy.set_x(enemy.x() + ENEMY_SPEED);
+        }
+        else
+        {
+            enemy.set_x(enemy.x() - ENEMY_SPEED);
+        }
+
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
@@ -150,6 +177,25 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+        bn::rect enemy_rect = bn::rect(enemy.y().round_integer(), enemy.y().round_integer(), ENEMY_SIZE.width(), ENEMY_SIZE.height());
+
+        // ENEMY
+        if (player_rect.intersects(enemy_rect))
+        {
+            score = 0;
+            player.set_x(PLAYER_X);
+            player.set_y(PLAYER_Y);
+            enemy.set_x(ENEMY_X);
+            enemy.set_y(ENEMY_Y);
+
+            // places orbs in random spots
+            int new_x = rng.get_int(MIN_X, MAX_X);
+            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            treasure.set_position(new_x, new_y);
+
+            // Resets boosts
+            Speed_boost = 3;
+        }
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
