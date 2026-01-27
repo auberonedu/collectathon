@@ -20,6 +20,15 @@ Make it so that the player loops around the screen (B)
 Make a speed boost (A)
 >>>>>>> b0d2cbe258d816764434bd05b2b80b55951ad451
 ## Brainstorming game ideas
+I'm thinking add a boost count that will display the number of boost we have
+prob gonna be st like 3. // 2 // 1 // 0
+How about the screen shake when using boost 
+
 
 ## Plan for implementing game
-
+boost count + shaky shaky when using boost
+- show 3 begining. maybe top left? or top right hmm.
+- go down 1 for each time using A
+- show 0 when out
+- screen shake when using boost
+shaky_x and y.   boost/frame_left using a_pressed()
