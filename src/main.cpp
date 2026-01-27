@@ -219,12 +219,8 @@ int main()
 
         // If score > 10, treasure sprite becomes mega - Seadrah
 
-<<<<<<< HEAD
-        if (score == 10) {
-=======
         if (score == 10)
         {
->>>>>>> 95347ac1965f62a1c1f52da35fb9b07270a1c6a5
             treasure = bn::sprite_items::megadot.create_sprite(0, 0);
 
             treasure_rect = bn::rect(treasure.x().round_integer(),
