@@ -34,10 +34,28 @@ created another if statement in the while true loop and when start is pressed. s
 5.Make it so that the player loops around the screen (if they go off the left of the screen, they show up on the right, if they go off the bottom of the screen they show up at the top, etc.)
 I changed the code from  stop the player at the screen edges to “teleport the player to the opposite side when they leave the screen.”
 
+<<<<<<< HEAD
 6.Make a speed boost. When the player presses 'A', their speed is increased for a short amount of time. They can only use the speed boost 3 times. They get all speed boosts back when the game is restarted by pressing start.
+
+Created two variables for speed boost and timer. Then created a while true loop and if statement to pick the speed. Then added boost and timer to apply when the game is restarted as well
 
 
 ## Brainstorming game ideas
+1. Start off by brainstorming ideas of how to make this game more fun. A few ideas:
+ - Change sprite - create new graphics.
+ - Add background sprites? - like trees or clouds?.
+ - Visually showing how many speed boosts we have left.
+ - Maze to block it from being easy
+ - Timer
+ - simple sound (background music)
+
+2. How can you visibly show how many speed boosts the player has remaining?
+3. Can you change the way movement works to make it more interesting?
+4. What if there are obstacles / enemies?
+5. What if there is a timer?
+6. What sprites can you add/change?
+7. What if there are more interesting graphical / sound effects?
+8. What else???
 
 ## Plan for implementing game
 

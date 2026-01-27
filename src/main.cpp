@@ -49,30 +49,46 @@ int main()
 
     int score = 0;
 
+    int boosts_left = 3;
+    int boost_timer = 0;
+
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-60, -50);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(25, 0);
 
     while (true)
     {
+        if(bn::keypad::a_pressed() && boosts_left > 0 && boost_timer == 0)
+        {
+            boost_timer = 60;
+            boosts_left--;
+        }
+
+        bn::fixed current_speed = SPEED;
+
+        if(boost_timer > 0)
+        {
+            current_speed = 6;
+            boost_timer--;
+        }
+
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED);
+            player.set_x(player.x() - current_speed);
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED);
+            player.set_x(player.x() + current_speed);
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED);
+            player.set_y(player.y() - current_speed);
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED);
+            player.set_y(player.y() + current_speed);
         }
 
-       //
         if(player.x() < MIN_X)
         {
             player.set_x(MAX_X);
@@ -89,12 +105,13 @@ int main()
         {
             player.set_y(MIN_Y);
         }
-       
 
         // Reset game if start is pressed
         if (bn::keypad::start_pressed())
         {            
             score = 0;
+            boosts_left = 3;
+            boost_timer = 0;
             player.set_position(-60, -50);
             treasure.set_position(25, 0);
         }
@@ -112,7 +129,6 @@ int main()
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
-            // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
