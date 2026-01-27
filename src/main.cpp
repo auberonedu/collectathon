@@ -112,5 +112,18 @@ int main()
         rng.update();
 
         bn::core::update();
+
+        // restart the game by pressing start button
+        if (bn::keypad::start_pressed()) {
+
+            //reset player's position 
+            player.set_position(PLAYER_X, PLAYER_Y);
+            // reset treasure's position
+            treasure.set_position(TREASURE_X, TREASURE_Y);
+            //reset score
+            score = 0;
+            score_sprites.clear();
+        }
+        
     }
 }
