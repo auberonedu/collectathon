@@ -34,5 +34,12 @@ Make a speed boost
 
 ## Brainstorming game ideas
 
+- "Snake" game, eating an orb makes a trail
+
+- Add sound effect when scoring a point
+
+- Enemy slowly follows the player, if player touches it, the game ends
+
+
 ## Plan for implementing game
 
