@@ -10,6 +10,7 @@
 #include <bn_string.h>
 #include <bn_backdrop.h>
 #include <bn_color.h>
+#include <bn_math.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -17,6 +18,7 @@
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
+static constexpr bn::fixed TREASURE_SPEED = 1;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -59,7 +61,6 @@ int main()
     int boostMultiplier = 2; // How much faster the sphere moves
 
     int currentSpeedMultiplier = 1; // The Current multiplier for speed, gets changed to 2 when boosting.
-
     while (true)
     {
         // Speed boost
@@ -149,14 +150,38 @@ int main()
         }
 
         // Move treasure away from player
-        /*
-            Get player direction to treasure -> treasure(x,y)-player(x,y)
-            Multiply by treasure_speed
-            Move to new spot
-        */
+        // Get player direction to treasure -> treasure(x,y)-player(x,y)
+        bn::fixed dx = bn::clamp<bn::fixed>(treasure.x() - player.x(), -1, 1);
+        bn::fixed dy = bn::clamp<bn::fixed>(treasure.y() - player.y(), -1, 1);
+        // Get "Unit" (not actually unit but just 1 in either direction)
+        // Multiply by treasure_speed
+        dx = dx * TREASURE_SPEED;
+        dy = dy * TREASURE_SPEED;
+        // Move to new spot
+        treasure.set_x(treasure.x() + dx);
+        treasure.set_y(treasure.y() + dy);
+
+        // Loop treasure around border
+        if (treasure.x() >= MAX_X)
+        {
+            treasure.set_x(MIN_X + 1);
+        }
+        if (treasure.x() <= MIN_X)
+        {
+            treasure.set_x(MAX_X - 1);
+        }
+        if (treasure.y() >= MAX_Y)
+        {
+            treasure.set_y(MIN_Y + 1);
+        }
+        if (treasure.y() <= MIN_Y)
+        {
+            treasure.set_y(MAX_Y - 1);
+        }
 
         // Update score display
-        bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
+        bn::string<MAX_SCORE_CHARS>
+            score_string = bn::to_string<MAX_SCORE_CHARS>(score);
         score_sprites.clear();
         text_generator.generate(SCORE_X, SCORE_Y,
                                 score_string,
