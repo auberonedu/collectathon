@@ -54,3 +54,5 @@ Created two variables for speed boost and timer. Then created a while true loop 
 - add a simple background song by looking it up online free tunes to add to our audio folder and implement in main.cpp
 -Change the ball to be a bug sprite & and the Square into a bird sprite. Predator style
 
+
+
