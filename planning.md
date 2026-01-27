@@ -48,14 +48,7 @@ Created two variables for speed boost and timer. Then created a while true loop 
  - Maze to block it from being easy
  - Timer
  - simple sound (background music)
-
-2. How can you visibly show how many speed boosts the player has remaining?
-3. Can you change the way movement works to make it more interesting?
-4. What if there are obstacles / enemies?
-5. What if there is a timer?
-6. What sprites can you add/change?
-7. What if there are more interesting graphical / sound effects?
-8. What else???
+ - Levels to the game
 
 ## Plan for implementing game
 
