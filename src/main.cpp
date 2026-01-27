@@ -27,12 +27,11 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
-//new starting location for treasure and player 
+// new starting location for treasure and player
 static constexpr int PLAYER_START_X = -50;
 static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
-
 
 // Number of characters required to show the longest numer possible in an int (-2147483647)
 static constexpr int MAX_SCORE_CHARS = 11;
@@ -56,7 +55,7 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
-    //Backdrop Color
+    // Backdrop Color
     bn::backdrop::set_color(bn::color(30, 0, 30));
 
     while (true)
@@ -77,6 +76,33 @@ int main()
         if (bn::keypad::down_held())
         {
             player.set_y(player.y() + SPEED);
+        }
+
+        if (bn::keypad::start_pressed())
+        {
+            player.set_x(PLAYER_START_X);
+            player.set_y(PLAYER_START_Y);
+            score = 0;
+            treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
+        }
+
+        // Wrap player around screen edges
+        if (player.x() < MIN_X)
+        {
+            player.set_x(MAX_X);
+        }
+        else if (player.x() > MAX_X)
+        {
+            player.set_x(MIN_X);
+        }
+
+        if (player.y() < MIN_Y)
+        {
+            player.set_y(MAX_Y);
+        }
+        else if (player.y() > MAX_Y)
+        {
+            player.set_y(MIN_Y);
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
