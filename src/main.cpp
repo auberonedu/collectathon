@@ -42,7 +42,7 @@ int main()
 {
     bn::core::init();
 
-    bn::backdrop::set_color(bn::color(20, 15, 15));
+    bn::backdrop::set_color(bn::color(21, 15, 15));
     bn::random rng = bn::random();
 
     // Will hold the sprites for the score
