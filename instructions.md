@@ -133,7 +133,7 @@ You will be responsible for making changes to the game. MAKE SURE THAT ALL PARTN
 For each change, first make a plan in instructions.md. Pull, add, commit, push your plan, then implement it. Pull, add, commit and push the implementation. You will be make a lot of commits! This is good! Merge conflicts will likely arise. This is OK and natural. Resolve them as they come up.
 
 Required changes (increasing in difficulty).
-1. Change the speed of the player from 1 to 2
+1. Change the speed of the player from 1 to 3
 1. Change the backdrop color from black to red
 1. Change the starting position of the player and dot, making new `static constexpr` for starting X and Y of each
 1. Make it so when the player hits start, the game restarts (the player and treasure are sent back to their initial positions and the score is reset to zero)
