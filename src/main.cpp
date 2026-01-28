@@ -74,6 +74,7 @@ int main()
         // Speed boost set to A button
         if (bn::keypad::a_pressed() && BOOSTS_LEFT > 0 && BOOST_DURATION_FRAMES <= 0)
         {
+            bn::sound_items::zoom.play(); //play zoom sound
             BOOST_DURATION_FRAMES = 180;
             BOOSTS_LEFT--;
         }
@@ -120,7 +121,7 @@ int main()
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
-            bn::sound_items::collect.play();
+            bn::sound_items::collect.play(); // play collect sound
 
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
