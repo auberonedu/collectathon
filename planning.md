@@ -20,6 +20,8 @@ A place to write your findings and plans
 * Make a speed boost. When the player presses 'A', their speed is increased for a short amount of time. They can only use the speed boost 3 times. They get all speed boosts back when the game is restarted by pressing start.
 
 ## Brainstorming game ideas
-
+- Change game sprites
+- Add sound effects
+- Add visuals for speed boost amounts
 ## Plan for implementing game
 
