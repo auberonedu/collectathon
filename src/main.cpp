@@ -76,8 +76,8 @@ int main()
     // snakes body not including the head
     bn::vector<bn::sprite_ptr, MAX_SEGMENTS> body_segments;
     // using vector to store the exisiting position of the head so the body can follow
-    static constexpr int MAX_TRAIL_POINTS = MAX_SEGMENTS * 8;
-    bn::vector<bn::fixed_point, MAX_TRAIL_POINTS> head_positions;
+    static constexpr int MAX_TAIL_SEGMENTS = MAX_SEGMENTS * 8;
+    bn::vector<bn::fixed_point, MAX_TAIL_SEGMENTS> head_positions;
     // spacing the body segments along the tail
     int position_step_counter = 0;
 
@@ -153,7 +153,7 @@ int main()
         if (position_step_counter >= POSITION_STEP_FRAMES)
         {
             position_step_counter = 0;
-            if (head_positions.size() < MAX_TRAIL_POINTS)
+            if (head_positions.size() < MAX_TAIL_SEGMENTS)
             {
                 // push the head vector down by one element
                 head_positions.push_back(bn::fixed_point());
@@ -165,6 +165,9 @@ int main()
             }
             // keep our head stored at index 0
             head_positions[0] = bn::fixed_point(player.x(), player.y());
+
+            // Update body segments to follow the head
+
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -186,6 +189,12 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+
+            //Add a new body segment if we have space ( - 1 to account for the head)
+            if (body_segments.size() < MAX_SEGMENTS - 1)
+            {
+                body_segments.push_back(bn::sprite_items::square.create_sprite(player.x(), player.y()));
+            }
         }
 
         // Update score display
