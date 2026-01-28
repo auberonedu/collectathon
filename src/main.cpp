@@ -11,8 +11,10 @@
 #include <bn_backdrop.h>
 #include <bn_color.h>
 
-#include "bn_sprite_items_oyster.h"
-#include "bn_sprite_items_crab.h"
+#include "bn_sprite_items_dot.h"
+#include "bn_sprite_items_square.h"
+#include "bn_sound_items.h"
+#include "bn_sound.h"
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
@@ -61,8 +63,8 @@ int main()
 
     int score = 0;
 
-    bn::sprite_ptr player = bn::sprite_items::crab.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-    bn::sprite_ptr treasure = bn::sprite_items::oyster.create_sprite(TREASURE_START_X,
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X,
                                                                   TREASURE_START_Y);
 
     while (true)
@@ -118,6 +120,8 @@ int main()
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
+            bn::sound_items::collect.play();
+
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
