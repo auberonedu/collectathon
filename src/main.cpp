@@ -87,22 +87,47 @@ int main()
     while (true)
     {
         // Move player with d-pad
-        if (bn::keypad::left_held())
+        // if (bn::keypad::left_held())
+        // {
+        //     player.set_x(player.x() - current_speed);
+        // }
+        // if (bn::keypad::right_held())
+        // {
+        //     player.set_x(player.x() + current_speed);
+        // }
+        // if (bn::keypad::up_held())
+        // {
+        //     player.set_y(player.y() - current_speed);
+        // }
+        // if (bn::keypad::down_held())
+        // {
+        //     player.set_y(player.y() + current_speed);
+        // }
+
+        //Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
+        bn::fixed dx = 0;
+        bn::fixed dy = 0;
+
+        if (bn::keypad::left_held() && dx == 0 && dy == 0) 
         {
-            player.set_x(player.x() - current_speed);
-        }
-        if (bn::keypad::right_held())
+            dx = -current_speed;
+        } 
+        if (bn::keypad::right_held() && dx == 0 && dy == 0) 
         {
-            player.set_x(player.x() + current_speed);
+            dx = current_speed;
         }
-        if (bn::keypad::up_held())
+        if (bn::keypad::down_held() && dx == 0 && dy == 0) 
         {
-            player.set_y(player.y() - current_speed);
+            dy = current_speed;
         }
-        if (bn::keypad::down_held())
+        if (bn::keypad::up_held() && dx == 0 && dy == 0) 
         {
-            player.set_y(player.y() + current_speed);
+            dy = -current_speed;
         }
+        
+
+        player.set_x(player.x() + dx);
+        player.set_y(player.y() + dy);
 
         // Speed Boost
         if (bn::keypad::a_pressed() && (boost_remaining > 0) && (boost_duration_counter == 0))
