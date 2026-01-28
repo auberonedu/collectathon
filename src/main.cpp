@@ -82,10 +82,12 @@ int main()
     //holds pause text in list
     bn::vector<bn::sprite_ptr, 10> score_text_sprites;
     bn::vector<bn::sprite_ptr, 20> paused_sprites;
+    bn::vector<bn::sprite_ptr, 20> instruction_sprites;
 
     //adds text to list
     text_generator.generate(50, -70, "Score:", score_text_sprites);
     text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
+    text_generator.generate(-50, 60, "A - Boost (x3)", instruction_sprites);
 
     while (true)
     {
@@ -94,7 +96,9 @@ int main()
             SPEED = 0;
             ENEMY_SPEED = 0;
             paused_sprites.clear();
+            instruction_sprites.clear();
             text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
+            text_generator.generate(-50, 60, "A - Boost (x3)", instruction_sprites);
         }
 
         // Move player with d-pad
@@ -174,6 +178,7 @@ int main()
 
             //clears start to play text
             paused_sprites.clear();
+            instruction_sprites.clear();
 
             //unpauses game
             paused = false;
