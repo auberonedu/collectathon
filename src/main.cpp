@@ -34,11 +34,11 @@ static constexpr int MAX_X = bn::display::width() / 2;
 static constexpr int MAX_SCORE_CHARS = 11;
 
 // Score location
-static constexpr int SCORE_X = 70;
+static constexpr int SCORE_X = 90;
 static constexpr int SCORE_Y = -70;
 
 // Speed Boost Location
-static constexpr int SPEED_BOOST_COUNT_X = -70;
+static constexpr int SPEED_BOOST_COUNT_X = -20;
 static constexpr int SPEED_BOOST_COUNT_Y = -70;
 static constexpr int SPEED_BOOST_COUNT_CHARS = 11;
 
@@ -66,9 +66,15 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
+    bn::vector<bn::sprite_ptr,5> score_label_sprites;
+    text_generator.generate(SCORE_X - 50 ,SCORE_Y, "SCORE:", score_label_sprites);
 
     // This will hold the sprites for the speed boost count
+    bn::vector<bn::sprite_ptr, 11> boost_label_sprites = {};
     bn::vector<bn::sprite_ptr, SPEED_BOOST_COUNT_CHARS> boost_sprites = {};
+
+    text_generator.generate(SPEED_BOOST_COUNT_X - 90, SPEED_BOOST_COUNT_Y,
+    "BOOST LEFT:", boost_label_sprites);
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
@@ -183,6 +189,8 @@ int main()
         text_generator.generate(SPEED_BOOST_COUNT_X, SPEED_BOOST_COUNT_Y,
                                 boost_string,
                                 boost_sprites);
+        // added Boost count text
+
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
