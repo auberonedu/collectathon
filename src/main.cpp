@@ -84,7 +84,7 @@ int main()
 
     for(int i = 0; i< bn::display::width(); i+= 16)
     {
-        wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MAX_Y));
+        wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y));
     }
 
     while (true)
