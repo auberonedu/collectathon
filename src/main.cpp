@@ -22,6 +22,7 @@
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
 static constexpr bn::fixed TREASURE_SPEED = 1;
+static constexpr bn::fixed ENEMYBOX_SPEED = .5;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -68,6 +69,9 @@ int main()
     int boostMultiplier = 2; // How much faster the sphere moves
 
     int currentSpeedMultiplier = 1; // The Current multiplier for speed, gets changed to 2 when boosting.
+
+    int enemyDirection = 1;
+
     while (true)
     {
 
@@ -233,7 +237,31 @@ int main()
                                           MEGA_TREASURE_SIZE.height());
         }
 
-        //enemie logic
+        //enemy logic
+
+        //sets ememy dircetions
+        if(score%2==0){
+            if(enemybox.x()>=MAX_X){
+                enemyDirection= -1;
+            }
+            if(enemybox.x()<=MIN_X){
+                enemyDirection= 1;
+            }
+            enemybox.set_x(enemybox.x() + ENEMYBOX_SPEED *enemyDirection);
+        }
+        if (score % 2 == 1)
+        {
+            if (enemybox.y() >= MAX_Y)
+            {
+                enemyDirection = -1;
+            }
+            if (enemybox.y() <= MIN_Y)
+            {
+                enemyDirection = 1;
+            }
+            enemybox.set_y(enemybox.y() + ENEMYBOX_SPEED*enemyDirection);
+        }
+
         if(player_rect.intersects(enemybox_rect)){
             score--;
             player.set_x(10);
