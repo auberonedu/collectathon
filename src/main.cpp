@@ -66,19 +66,24 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
-    bn::vector<bn::sprite_ptr,5> score_label_sprites;
-    text_generator.generate(SCORE_X - 50 ,SCORE_Y, "SCORE:", score_label_sprites);
+    bn::vector<bn::sprite_ptr, 5> score_label_sprites;
+    text_generator.generate(SCORE_X - 50, SCORE_Y, "SCORE:", score_label_sprites);
 
     // This will hold the sprites for the speed boost count
     bn::vector<bn::sprite_ptr, 11> boost_label_sprites = {};
     bn::vector<bn::sprite_ptr, SPEED_BOOST_COUNT_CHARS> boost_sprites = {};
 
     text_generator.generate(SPEED_BOOST_COUNT_X - 90, SPEED_BOOST_COUNT_Y,
-    "BOOST LEFT:", boost_label_sprites);
+                            "BOOST LEFT:", boost_label_sprites);
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
+<<<<<<< HEAD
+    bn::vector<bn::sprite_ptr, 12> wave_sprites = {};
+    int wave_timer = 180;
+    int wave = 1;
+=======
     //create wall vector
     bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
 
@@ -86,6 +91,7 @@ int main()
     {
         wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y));
     }
+>>>>>>> ce47c7256f6d1deb955b962e27b7ba81e2dc59ed
 
     while (true)
     {
@@ -172,8 +178,8 @@ int main()
         {
             duration = 180;
             boostCount--;
-            if(boostCount < 0)
-            boostCount = 0;
+            if (boostCount < 0)
+                boostCount = 0;
         }
 
         // Update score display
@@ -191,10 +197,20 @@ int main()
                                 boost_sprites);
         // added Boost count text
 
-
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
 
+        if (wave_timer > 0)
+        {
+            wave_sprites.clear();
+            bn::string<12> wave_string = "WAVE: " + bn::to_string<12>(wave);
+            text_generator.generate(-20, 0, wave_string, wave_sprites);
+            wave_timer--;
+        }
+        else
+        {
+            wave_sprites.clear();
+        }
         bn::core::update();
     }
 }
