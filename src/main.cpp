@@ -50,7 +50,7 @@ static constexpr int SCORE_Y = -70;
 // Maximum number of Snake Segments including the head
 static constexpr int MAX_SEGMENTS = 64;
 // frames between each position so it looks smooth
-static constexpr int POSITION_STEP_FRAMES = 2;
+static constexpr int POSITION_STEP_FRAMES = 1;
 
 int main()
 {
