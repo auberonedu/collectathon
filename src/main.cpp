@@ -14,6 +14,7 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+#include "bn_sprite_items_brick.h"
 
 // imports/includes  all the core functions of gameboy which includes, keypad, core, sprite
 // as well as the random
