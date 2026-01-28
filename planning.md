@@ -26,6 +26,12 @@ How about the screen shake when using boost  // not work! so hard
 make the player blink when using boost?
 
 
+Change the player sprite color (or palette) while boosted
+Add a faster speed when going vertical. 
+Even adding another sprite that is against the player, maybe slows the character down?
+
+
+
 ## Plan for implementing game
 boost count + blink when using boost
 - show 3 begining. maybe top left? or top right hmm.
