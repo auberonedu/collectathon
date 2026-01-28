@@ -37,6 +37,10 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+// Speed boost location
+static constexpr int BOOST_X = -70;
+static constexpr int BOOST_Y = -70;
+
 // Speed boost parameters
 static int BOOSTS_LEFT = 3;
 static int BOOST_DURATION_FRAMES = 0;
@@ -62,6 +66,9 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
+
+    bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> boost_sprites = {};
+    bn::sprite_text_generator boost_generator(common::fixed_8x16_sprite_font);
 
     bn::sprite_ptr player = bn::sprite_items::crab.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::oyster.create_sprite(TREASURE_START_X,
@@ -160,6 +167,13 @@ int main()
         {
             player.set_y(MIN_Y);
         }
+
+        //Update boost amount
+        bn::string<MAX_SCORE_CHARS> boost_string = bn::to_string<MAX_SCORE_CHARS>(BOOSTS_LEFT);
+        boost_sprites.clear();
+        text_generator.generate(BOOST_X, BOOST_Y,
+                                boost_string,
+                                boost_sprites);
 
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
