@@ -238,6 +238,10 @@ int main()
             score--;
             player.set_x(10);
             player.set_y(10);
+            int new_x = rng.get_int(MIN_X, MAX_X);
+            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            enemybox.set_x(new_x);
+            enemybox.set_y(new_y);
         }
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
