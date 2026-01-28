@@ -11,7 +11,6 @@
 #include <bn_backdrop.h>
 #include <bn_vector.h>
 #include <bn_music.h>
-#include <bn_music_items.h>
 #include "bn_sound_items.h"
 
 #include "bn_sprite_items_dot.h"
@@ -64,8 +63,8 @@ int main()
     int score = 0;
 
     // BOST VERIABLES
-    int speed_boost = 3;   // AMOUNT OF BOOSTS
-    int BOOST = 0;         // INCREASE IN SPEED
+    int boost_amt = 3;   // AMOUNT OF BOOSTS
+    int BOOST_SPD = 0;         // INCREASE IN SPEED
     int boost_length = 0; // TIME BEFORE BOOST ENDS
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
@@ -82,19 +81,19 @@ int main()
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED - BOOST);
+            player.set_x(player.x() - SPEED - BOOST_SPD);
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED + BOOST);
+            player.set_x(player.x() + SPEED + BOOST_SPD);
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED - BOOST);
+            player.set_y(player.y() - SPEED - BOOST_SPD);
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED + BOOST);
+            player.set_y(player.y() + SPEED + BOOST_SPD);
         }
 
         // // Places the player on the other side of the screen
@@ -125,7 +124,7 @@ int main()
             treasure.set_position(new_x, new_y);
 
             // Resets boosts
-            speed_boost = 3;
+            boost_amt = 3;
         }
         // Restart the game when pressed START
         if (bn::keypad::start_pressed())
@@ -146,16 +145,16 @@ int main()
             treasure.set_position(new_x, new_y);
 
             // resets boosts
-            speed_boost = 3;
+            boost_amt = 3;
         }
 
         // BOOST
-        if (bn::keypad::a_pressed() && speed_boost > 0)
+        if (bn::keypad::a_pressed() && boost_amt > 0)
         {
             bn::sound_items::boost.play();
-            speed_boost--;      // HOW MANY BOOST FOR GAME
+            boost_amt--;      // HOW MANY BOOST FOR GAME
             boost_length = 30; // HOW MANY FRAMES BEFORE BOOST ENDS
-            BOOST = 2;
+            BOOST_SPD = 2;
         }
         if (boost_length > 0)
         {
@@ -163,7 +162,7 @@ int main()
         }
         else
         {
-            BOOST = 0;
+            BOOST_SPD = 0;
         }
 
         // ENEMY MOVEMENT
@@ -216,7 +215,7 @@ int main()
             treasure.set_position(new_x, new_y);
 
             // Resets boosts
-            speed_boost = 3;
+            boost_amt = 3;
         }
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
