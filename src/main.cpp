@@ -79,11 +79,10 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
-<<<<<<< HEAD
     bn::vector<bn::sprite_ptr, 12> wave_sprites = {};
     int wave_timer = 180;
     int wave = 1;
-=======
+    
     //create wall vector
     bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
 
@@ -91,7 +90,6 @@ int main()
     {
         wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y));
     }
->>>>>>> ce47c7256f6d1deb955b962e27b7ba81e2dc59ed
 
     while (true)
     {
