@@ -15,10 +15,10 @@
 #include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = .85;
+static constexpr bn::fixed SPEED = 1;
 
 // Boost speed
-static constexpr bn::fixed BOOSTED_SPEED = 5;
+static constexpr bn::fixed BOOSTED_SPEED = 2;
 
 // Boost duration
 static constexpr int BOOST_DURATION_FRAMES = 300;
