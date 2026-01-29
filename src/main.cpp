@@ -21,7 +21,7 @@
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
-static constexpr bn::fixed TREASURE_SPEED = .25;
+static constexpr bn::fixed TREASURE_SPEED = 1;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -273,7 +273,6 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
     bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(0, 0);
-    bn::vector<bn::sprite_ptr, 8> smallEnemies = {};
 
     while (true)
     {
