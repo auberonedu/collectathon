@@ -33,13 +33,15 @@ static constexpr bn::color BG_COLORS[] = {
 };
 static constexpr int BG_COLOR_COUNT = 6;
 
-
-
+// for obstacle
+static constexpr int OBSTACLE_X = 0;
+static constexpr int OBSTACLE_Y = 0;
 
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size OBSTACLE_SIZE = {8, 8};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -86,6 +88,7 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_X, TREASURE_Y);
+    bn::sprite_ptr obstacle = bn::sprite_items::square.create_sprite(OBSTACLE_X, OBSTACLE_Y);
     
 
     while (true)
@@ -129,6 +132,10 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+        bn::rect obstacle_rect = bn::rect(obstacle.x().round_integer(),
+                                        obstacle.y().round_integer(),
+                                        OBSTACLE_SIZE.width(),
+                                        OBSTACLE_SIZE.height());
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
@@ -148,6 +155,19 @@ int main()
             }
             // Apply new background color
             bn::backdrop::set_color(BG_COLORS[bg_color_index]);
+        }
+
+
+        // if player hit the obstacle, game will restart
+        if (player_rect.intersects(obstacle_rect)) {
+            player.set_position(PLAYER_X, PLAYER_Y);
+            treasure.set_position(TREASURE_X, TREASURE_Y);
+
+            score = 0;
+            boost_timer = 0;
+            boosts_left = MAX_BOOSTS;
+            speed_multiplier = 1;
+            game_timer = GAME_TIME_FRAMES;
         }
 
     
