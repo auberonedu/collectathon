@@ -16,7 +16,7 @@
 
 // change player color while boosted
 #include <bn_sprite_palette_ptr.h>
-#include <bn_sprite_palette_fade_manager.h>
+#include <bn_sprite_palettes.h>
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 3;
@@ -106,14 +106,14 @@ int main()
             player.set_visible((boost_frames_left / 5) % 2 == 0);
 
             // add a palette effect
-            bn::sprite_palette_fade_manager::set_intensity(0.3);   
+            bn::sprite_palettes::set_fade_intensity(0.3);   
             --boost_frames_left;
         }
         else
         {
             player.set_visible(true);
             // reset palette effect when not boosted
-            bn::sprite_palette_fade_manager::set_intensity(0);
+            bn::sprite_palettes::set_fade_intensity(0);
         }
 
         // Horizontal move: use current_speed

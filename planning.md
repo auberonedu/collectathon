@@ -43,3 +43,6 @@ change sprite to orange when boosted
 add another sprite that slows character down, maybe color blue?
 try to see if i can add faster speed.
 
+
+-------- 
+I still wanna try the shaking when boost but I may do it afterward since I need to do some homework, so ... to be continue
