@@ -18,12 +18,13 @@
 #include <bn_sprite_palette_ptr.h>
 #include <bn_sprite_palettes.h>
 
-// Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = 3;
+// Pixels / Frame player moves at - INCREASED SPEED
+static constexpr bn::fixed SPEED = 4;  // Changed from 3 to 4 for faster movement
 
-// Width and height of the player and treasure bounding boxes
+// Width and height of the player, treasure, and hazard bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size HAZARD_SIZE = {8, 8};  // New: size for slow hazard
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -31,13 +32,17 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
-// STARTING POSITIONS (new static constexpr)
+// STARTING POSITIONS
 static constexpr int PLAYER_START_X = -50;
 static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 50;
 static constexpr int TREASURE_START_Y = -20;
 
-// Number of characters required to show the longest number possible in an int
+
+static constexpr int HAZARD_START_X = 0;  //  hazard starting position - searched on yt
+static constexpr int HAZARD_START_Y = 0;
+
+
 static constexpr int MAX_SCORE_CHARS = 11;
 
 // Score location
@@ -47,7 +52,11 @@ static constexpr int SCORE_Y = -70;
 // Boost settings
 static constexpr int BOOST_MAX_USES = 3;
 static constexpr int BOOST_DURATION_FRAMES = 60;
-static constexpr bn::fixed BOOST_SPEED = 6;
+static constexpr bn::fixed BOOST_SPEED = 8;  // Increased from 6 to 8
+
+// Slow speed
+static constexpr int SLOW_DURATION_FRAMES = 90;  // How long slow effect lasts
+static constexpr bn::fixed SLOW_SPEED = 1.5;  // Speed when slowed down
 
 int main()
 {
@@ -66,6 +75,7 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
+    bn::sprite_ptr hazard = bn::sprite_items::dot.create_sprite(HAZARD_START_X, HAZARD_START_Y);  // New: slow hazard sprite
 
     // grab the player's palette 
     bn::sprite_palette_ptr player_palette = player.palette();
@@ -73,6 +83,9 @@ int main()
     // speed boost
     int boost_left = BOOST_MAX_USES;
     int boost_frames_left = 0;
+    
+    // slow effect 
+    int slow_frames_left = 0;
 
     while(true)
     {
@@ -80,12 +93,15 @@ int main()
         {
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
+
+            hazard.set_position(HAZARD_START_X, HAZARD_START_Y);  // Resets the hazard position
             score = 0;
             boost_left = BOOST_MAX_USES;
             boost_frames_left = 0;
+            slow_frames_left = 0;  // Reset slow effect
 
             player.set_visible(true);
-      bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
+            bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
         }
 
         // boost when press A
@@ -95,9 +111,21 @@ int main()
             boost_frames_left = BOOST_DURATION_FRAMES;
         }
 
-        // choose base speed
+        // choose base speed 
         bn::fixed current_speed = SPEED;
 
+        // Check if slow
+        if(slow_frames_left > 0)
+        {
+            current_speed = SLOW_SPEED;
+            
+            // Blue fade 
+            bn::sprite_palettes::set_fade(bn::color(0, 0, 31), 0.4);  // Blue fade
+            
+            --slow_frames_left;
+        }
+
+        // Boost
         if(boost_frames_left > 0)
         {
             current_speed = BOOST_SPEED;
@@ -105,15 +133,16 @@ int main()
             // blink effect
             player.set_visible((boost_frames_left / 5) % 2 == 0);
 
-            // add a palette effect
-          bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0.3);
+            // Orange fade
+            bn::sprite_palettes::set_fade(bn::color(31, 16, 0), 0.5);  // Orange fade
+            
             --boost_frames_left;
         }
-        else
+        else if(slow_frames_left == 0)  
         {
             player.set_visible(true);
-            // reset palette effect when not boosted
-        bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
+            // reset palette effect when not boosted or slowed
+            bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
         }
 
         // Horizontal move: use current_speed
@@ -157,7 +186,7 @@ int main()
             player.set_y(MIN_Y);
         }
 
-        // The bounding boxes of the player and treasure, snapped to integer pixels
+        // The bounding boxes of the player, treasure, and hazard
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
                                         PLAYER_SIZE.width(),
@@ -167,7 +196,12 @@ int main()
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
 
-        // If the bounding boxes overlap, set the treasure to a new location and increase score
+        bn::rect hazard_rect = bn::rect(hazard.x().round_integer(),  //hazard bounding box
+                                        hazard.y().round_integer(),
+                                        HAZARD_SIZE.width(),
+                                        HAZARD_SIZE.height());
+
+        // If the bounding boxes overlap with treasure, set the treasure to a new location and increase score
         if(player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
@@ -176,6 +210,18 @@ int main()
             treasure.set_position(new_x, new_y);
 
             ++score;
+        }
+
+
+        if(player_rect.intersects(hazard_rect))
+        {
+            // slow affect applies
+            slow_frames_left = SLOW_DURATION_FRAMES;
+            
+    
+            int new_x = rng.get_int(MIN_X, MAX_X);
+            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            hazard.set_position(new_x, new_y);
         }
 
         // Update score display
