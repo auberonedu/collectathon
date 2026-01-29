@@ -24,4 +24,6 @@ A place to write your findings and plans
 - Add sound effects
 - Add visuals for speed boost amounts
 ## Plan for implementing game
-
+- Game sprites made with LibreSprite, and implemented with the help of sprite_items
+- Sound effects from open source libraries implemented into directory, processed with bn_sound_items.
+- Created another sprite visual from original score-counter, repurposed for boost amount.
