@@ -61,7 +61,7 @@ int main()
 
     // timer variables
     bn::vector<bn::sprite_ptr, 32> time_sprites = {};
-    int start_time = 30; 
+    int start_time = 30;
     int time = start_time;
     bn::timer timer;
     uint64_t ticks = 0;
@@ -72,7 +72,7 @@ int main()
     int score = 0;
 
     // bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(startPosX, startPosY); // KJeans Changed
+    bn::sprite_ptr player = bn::sprite_items::dot.create_sprite(startPosX, startPosY); // KJeans Changed
 
     bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(0, 0);
 
@@ -209,7 +209,7 @@ int main()
             }
             text_sprites.clear();
             text_generator.generate(0, 0, "Score: " + bn::to_string<MAX_SCORE_CHARS>(score), text_sprites);
-            text_generator.generate(0,-16, "Press START to play again", text_sprites);
+            text_generator.generate(0, -16, "Press START to play again", text_sprites);
             bn::core::update();
             text_sprites.clear();
         }
