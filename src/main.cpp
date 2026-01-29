@@ -27,6 +27,8 @@ static constexpr bn::fixed SPEED = 3;
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size FOX_SIZE = {32, 32};
+static constexpr bn::size CAR_SIZE = {32, 16};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
