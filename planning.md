@@ -31,6 +31,6 @@ Let's set an icon/indicator for speed boosts just like for score.
 Can we perhaps make a ghosting effect upon speed boost activation?
 Can we add obstacles/boundaries/walls?
 
-
+Can we add a start menu screen?
 ## Plan for implementing game
-
+Set an indicator for speed boost amount.
