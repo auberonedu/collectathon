@@ -13,6 +13,7 @@
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "bn_sprite_items_common_fixed_8x16_font.h"
+#include <common_fixed_8x16_font.h>
 
 // Pixels / Frame player moves at - Anthony
 // Speed boost when A is pressed - Yousif
@@ -46,6 +47,7 @@ static constexpr int SCORE_Y = -70;
 static constexpr int BOOST_X = -65;
 static constexpr int BOOST_Y = -70;
 
+
 // Player location and follower - Anthony
 static constexpr bn::fixed PLAYER_Y = 40;
 static constexpr bn::fixed PLAYER_X = 40;
@@ -78,6 +80,7 @@ int main()
     // amount of boosts left display
     bn::string<MAX_SCORE_CHARS> boost_string = {};
     bn::vector<bn::sprite_ptr, MAX_BOOST_CHARS> boost_sprites = {};
+    bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
     bn::sprite_ptr follower = bn::sprite_items::dot.create_sprite(FOLLOWER_X, FOLLOWER_Y);
