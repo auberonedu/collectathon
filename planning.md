@@ -34,3 +34,4 @@ Can we add obstacles/boundaries/walls?
 Can we add a start menu screen?
 ## Plan for implementing game
 Set an indicator for speed boost amount.
+Add a menu separate from game.

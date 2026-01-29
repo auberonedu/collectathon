@@ -118,9 +118,13 @@ int main()
                 SPEED_BOOST_TIMER = 180; // 3 seconds
                 boost_left--;
             }
+
             if (SPEED_BOOST_TIMER > 0)
             {
                 SPEED_BOOST_TIMER--;
+                // Jutter player position to simulate speed/running effect for fun - Anthony
+                player.set_x(player.x() + rng.get_fixed(-0.5, 0.5));
+                player.set_y(player.y() + rng.get_fixed(-0.5, 0.5));
                 if (SPEED_BOOST_TIMER == 0)
                 {
                     speed = SPEED;
