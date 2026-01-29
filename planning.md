@@ -5,8 +5,14 @@ I think,  the SPEED variable is constant and used for giving the constant pace f
 
 ## Planning required changes
 I think, For our game we will create one of the changes which is adding a timer. It will be a 30 seconds timer and the player will have 30 seconds to capture the enemy and gain as many points as possible under 30 seconds. 
+
 For our second change we added six different background colors red, purple, brown , blue, cyan and magenta. Whenever the player is playing it changes the background colors to those colors. 
 
+For our third change we added a obstacle so everytime you hit that obstacle the game restarts. 
+
 ## Brainstorming game ideas
+1. Different colors either changing the dot colors or background color.
+2. Adding a timer or adding no timer.
+3. Adding a obstacle so when you hit that obstacle the game restarts.  
 
 ## Plan for implementing game
