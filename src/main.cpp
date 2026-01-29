@@ -18,10 +18,11 @@
 #include "bn_sprite_items_enemy.h"
 #include "bn_sprite_items_megadot.h"
 #include "bn_sprite_items_enemydot.h"
+#include "bn_sprite_items_smallenemy.h"
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
-static constexpr bn::fixed TREASURE_SPEED = 1;
+static constexpr bn::fixed TREASURE_SPEED = .25;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -60,6 +61,7 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
     bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(0, 0);
+    bn::vector<bn::sprite_ptr, 8> smallEnemies={}; 
 
     int boostDuration = 60;  // How long the boost will last in frames(?)
     int boostTime = 0;       // Decreases while boosting
@@ -72,6 +74,14 @@ int main()
     int enemyDirectionY = 1; // Used to determine movement logic for enemybox on y axis
     int enemySpeedX=1;
     int enemySpeedY=1;
+    int smallenemyDirectionX=0;
+    int smallenemyDirectionY=1;
+    for (int i = 0; i < 7; i++)
+    {
+        smallEnemies.push_back(bn::sprite_items::smallenemy.create_sprite(  100,100));
+        // small.set_x(small.x() + smallenemyDirectionX);
+        // small.set_y(small.y() + smallenemyDirectionY);
+    }
 
     while (true)
     {
@@ -164,6 +174,8 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+
+
         }
 
         // Move treasure away from player
