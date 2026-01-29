@@ -15,6 +15,8 @@
 #include "common_fixed_8x16_font.h"
 #include <bn_music.h>
 #include <bn_music_items.h>
+#include "bn_sprite_items_fox.h"
+#include "bn_sprite_items_car.h"
 
 
 
