@@ -56,6 +56,9 @@ static constexpr int POSITION_STEP_FRAMES = 1;
 enum class Direction {NONE, LEFT, RIGHT, UP, DOWN};
 Direction last_dir = Direction::NONE;
 
+//Self Collision 
+bool self_collision = false;
+
 int main()
 {
     bn::core::init();
@@ -150,7 +153,7 @@ int main()
             boost_duration_counter--;
         }
 
-        if (bn::keypad::start_pressed())
+        if (bn::keypad::start_pressed() || self_collision)
         {
             player.set_x(PLAYER_START_X);
             player.set_y(PLAYER_START_Y);
@@ -161,6 +164,7 @@ int main()
             body_segments.clear();
             head_positions.clear();
             position_step_counter = 0;
+            self_collision = false;
         }
 
         // Wrap player around screen edges
@@ -220,7 +224,7 @@ int main()
             }
         }
 
-        // The bounding boxes of the player and treasure, snapped to integer pixels
+        // The bounding boxes of the player and treasure, snapped to integer pixels and body segments
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
                                         PLAYER_SIZE.width(),
@@ -229,7 +233,19 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+        
+        //Check for collision between player (head) and body segments
+        for (int i = 0; i < body_segments.size(); ++i) {
+            bn::rect body_rect = bn::rect(body_segments[i].x().round_integer(),
+                                          body_segments[i].y().round_integer(),
+                                          PLAYER_SIZE.width(),
+                                          PLAYER_SIZE.height());
+            if (player_rect.intersects(body_rect)) {
+                self_collision = true;
+                break;
+            }
 
+        }
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
