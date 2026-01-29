@@ -27,7 +27,7 @@ static constexpr bn::fixed TREASURE_SPEED = 1;
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
 static constexpr bn::size MEGA_TREASURE_SIZE = {16, 16};
-static constexpr bn::size ENEMYBOX_SIZE={32,32};
+static constexpr bn::size ENEMYBOX_SIZE = {32, 32};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -68,10 +68,15 @@ int main()
 
     int currentSpeedMultiplier = 1; // The Current multiplier for speed, gets changed to 2 when boosting.
 
-    int enemyDirectionX = 1; //Used to determine movement logic for enemybox on x axis
+    // The CURRENT width and height of the treasure ( this could be done better )
+    int treasureSizeX = TREASURE_SIZE.width();
+    int treasureSizeY = TREASURE_SIZE.height();
+    int treasureScareMultiplier = 3; // This multiplied with the treasure's size is the distance it will run from the player at.
+
+    int enemyDirectionX = 1; // Used to determine movement logic for enemybox on x axis
     int enemyDirectionY = 1; // Used to determine movement logic for enemybox on y axis
-    int enemySpeedX=1;
-    int enemySpeedY=1;
+    int enemySpeedX = 1;
+    int enemySpeedY = 1;
 
     while (true)
     {
@@ -155,8 +160,8 @@ int main()
                                           ENEMYBOX_SIZE.width(),
                                           ENEMYBOX_SIZE.height());
 
-            // If the bounding boxes overlap, set the treasure to a new location an increase score
-            if (player_rect.intersects(treasure_rect))
+        // If the bounding boxes overlap, set the treasure to a new location an increase score
+        if (player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
@@ -179,7 +184,7 @@ int main()
         treasure.set_y(treasure.y() + dy);
 
         // Loop treasure around border ONLY when the player is close enough
-        if (bn::abs(treasure.x() - player.x()) < TREASURE_SIZE.width() * 3 && bn::abs(treasure.y() - player.y()) < TREASURE_SIZE.height() * 3)
+        if (bn::abs(treasure.x() - player.x()) < treasureSizeX * treasureScareMultiplier && bn::abs(treasure.y() - player.y()) < treasureSizeY * treasureScareMultiplier)
         {
             if (treasure.x() >= MAX_X)
             {
@@ -201,21 +206,21 @@ int main()
         else
         {
             // Otherwise just bonk.
-            if (treasure.x() >= MAX_X - TREASURE_SIZE.width())
+            if (treasure.x() >= MAX_X - treasureSizeX)
             {
-                treasure.set_x(MAX_X - TREASURE_SIZE.width());
+                treasure.set_x(MAX_X - treasureSizeX);
             }
-            if (treasure.x() <= MIN_X + TREASURE_SIZE.width())
+            if (treasure.x() <= MIN_X + treasureSizeX)
             {
-                treasure.set_x(MIN_X + TREASURE_SIZE.width());
+                treasure.set_x(MIN_X + treasureSizeX);
             }
-            if (treasure.y() >= MAX_Y - TREASURE_SIZE.height())
+            if (treasure.y() >= MAX_Y - treasureSizeY)
             {
-                treasure.set_y(MAX_Y - TREASURE_SIZE.height());
+                treasure.set_y(MAX_Y - treasureSizeY);
             }
-            if (treasure.y() <= MIN_Y + TREASURE_SIZE.height())
+            if (treasure.y() <= MIN_Y + treasureSizeY)
             {
-                treasure.set_y(MIN_Y + TREASURE_SIZE.height());
+                treasure.set_y(MIN_Y + treasureSizeY);
             }
         }
         // Update score display
@@ -233,16 +238,18 @@ int main()
             treasure = bn::sprite_items::megadot.create_sprite(0, 0);
 
             treasure_rect = bn::rect(treasure.x().round_integer(),
-                                          treasure.y().round_integer(),
-                                          MEGA_TREASURE_SIZE.width(),
-                                          MEGA_TREASURE_SIZE.height());
+                                     treasure.y().round_integer(),
+                                     MEGA_TREASURE_SIZE.width(),
+                                     MEGA_TREASURE_SIZE.height());
+            treasureSizeX = MEGA_TREASURE_SIZE.width();
+            treasureSizeY = MEGA_TREASURE_SIZE.height();
         }
 
-        //enemy logic
+        // enemy logic
 
-        //sets ememy dircetions
+        // sets ememy dircetions
 
-        //moves on x axis when the score is a even number
+        // moves on x axis when the score is a even number
         if (enemybox.x() >= MAX_X)
         {
             enemyDirectionX = -1;
@@ -266,11 +273,12 @@ int main()
 
         enemybox.set_x(enemybox.x() + enemySpeedX * enemyDirectionX);
         enemybox.set_y(enemybox.y() + enemySpeedY * enemyDirectionY);
-        
 
-        //detects if player and enemy hit
-        if(player_rect.intersects(enemybox_rect)){
-            if( score>0){
+        // detects if player and enemy hit
+        if (player_rect.intersects(enemybox_rect))
+        {
+            if (score > 0)
+            {
                 score--;
             }
             player.set_x(10);
