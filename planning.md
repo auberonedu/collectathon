@@ -59,3 +59,5 @@ Created two variables for speed boost and timer. Then created a while true loop 
 Wave #7
 - Change color of screen when you pass every 5 levels.
 - Create an obstacle for the duck ( car and fox)
+- increase size of duck when reached a certain level
+- Sprite tiling 
