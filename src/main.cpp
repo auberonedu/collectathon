@@ -72,14 +72,16 @@ int main()
     
     //create wall vector
     bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
+    bn::vector<bn::rect, bn::display::width()/16> wall_rect = {};
+
     int wall_Y = MIN_Y;
-    
+
     while (true)
     {   
         
         // Game Reset
         if (bn::keypad::start_pressed())
-        {
+        {   
             boostCount = 3;
             duration = 0;
             score = 0;
@@ -87,7 +89,7 @@ int main()
             player.set_y(PLAYER_START_Y);
             treasure.set_x(TREASURE_START_X);
             treasure.set_y(TREASURE_START_Y);
-            wall_Y = MIN_Y;
+            wall_Y = MAX_Y;
         }
         
         // Move player with d-pad
@@ -107,24 +109,35 @@ int main()
         {
             player.set_y(player.y() + SPEED);
         }
-        
+
+        // wall functionallity
         if(wall_Y == MIN_Y)
-        {
+        {   // if the wall at is the top
             for(int i = 0; i< bn::display::width(); i+= 16)
             {
-                wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y+1));
+                if(rng.get_bool()){
+
+                    wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y+1));
+                }
+            }
+            for(int i=0;i<wall.size();i++){
+                wall_rect.push_back( bn::rect(  wall[i].x().round_integer(),
+                                                wall[i].y().round_integer(),
+                                                BRICK_SIZE.width(),
+                                                BRICK_SIZE.height() ));
             }
             wall_Y++;
 
         } 
         else if(wall_Y == MAX_Y)
-        {
+        { // if the wall is at the bottom
             wall.clear();
+            wall_rect.clear();
             wall_Y = MIN_Y;
         } 
         else 
-        {
-            for(int i = 0; i< bn::display::width()/16; i++)
+        {   //Move the wall
+            for(int i = 0; i< wall.size(); i++)
             {
                 wall[i].set_y(wall[i].y() + 1); 
             }
@@ -140,6 +153,14 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+        
+        for(int i = 0; i< wall.size(); i++)
+        {
+            wall_rect[i] = bn::rect(wall[i].x().round_integer(),
+                                    wall[i].y().round_integer(),
+                                    BRICK_SIZE.width(),
+                                    BRICK_SIZE.height());
+        }
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
@@ -151,6 +172,23 @@ int main()
 
             score++;
         }
+
+        for(int i = 0; i< wall.size(); i++)
+        {
+            if(player_rect.intersects(wall_rect[i]))
+            {
+                boostCount = 3;
+                duration = 0;
+                score = 0;
+                player.set_x(PLAYER_START_X);
+                player.set_y(PLAYER_START_Y);
+                treasure.set_x(TREASURE_START_X);
+                treasure.set_y(TREASURE_START_Y);
+                wall_Y = MAX_Y;
+            }
+
+        }
+
 
         if (player.x() > MAX_X)
         {
