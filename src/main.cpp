@@ -66,6 +66,11 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-60, -50);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(25, 0);
+    bn::sprite_ptr fox = bn::sprite_items::fox.create_sprite(0, 40);
+    bn::sprite_ptr car = bn::sprite_items::car.create_sprite(0, -40);
+
+    bn::fixed fox_vx= 1;
+    bn::fixed car_yv = 2;
 
     while (true)
     {
