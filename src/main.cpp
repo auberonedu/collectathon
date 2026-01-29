@@ -12,7 +12,9 @@
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
-#include "common_fixed_8x16_font.h"
+#include "bn_sprite_items_common_fixed_8x16_font.h"
+
+
 
 // Pixels / Frame player moves at - Anthony
 // Speed boost when A is pressed - Yousif
@@ -55,6 +57,7 @@ int main()
 {
     bn::core::init();
 
+    bn::sprite_text_generator text_generator(bn::sprite_font(bn::sprite_items::common_fixed_8x16_font));
     //Changed backdrop color - Yousif
     bn::backdrop::set_color(bn::color(15,0,31));
 
@@ -62,7 +65,14 @@ int main()
 
     // Will hold the sprites for the score
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
-    bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+    
+    // Text generator for score display
+    
+
+    // amount of boosts left display
+    bn::string<MAX_SCORE_CHARS> boost_string = {};
+    bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> boost_sprites = {};
+    
 
     int score = 0;
     bn::sprite_ptr follower = bn::sprite_items::dot.create_sprite(FOLLOWER_X, FOLLOWER_Y);
@@ -72,6 +82,8 @@ int main()
     // Main game loop
     while (true)
     {
+
+        
         //speed boost when a is pressed, stays for 3 seconds - Yousif
         if (bn::keypad::a_pressed() && SPEED_BOOST_TIMER == 0 && boost_left > 0)
         {
@@ -115,15 +127,20 @@ int main()
             player.set_y(player.y() + speed);
         }
 
-        // The bounding boxes of the player and treasure, snapped to integer pixels
+        // The bounding boxes of the player, follower, and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
                                         PLAYER_SIZE.width(),
                                         PLAYER_SIZE.height());
+        bn::rect follower_rect = bn::rect(follower.x().round_integer(),
+                                          follower.y().round_integer(),
+                                          FOLLOWER_SIZE.width(),
+                                          FOLLOWER_SIZE.height());
         bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
@@ -154,8 +171,16 @@ int main()
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
         score_sprites.clear();
         text_generator.generate(SCORE_X, SCORE_Y,
-                                score_string,
-                                score_sprites);
+                            score_string,
+                            score_sprites);
+
+        // Update boost left display 
+        boost_sprites.clear();
+        boost_string.clear();
+        boost_string = "Boosts: " + bn::to_string<MAX_SCORE_CHARS>(boost_left);
+        text_generator.generate(BOOST_X, BOOST_Y,
+                            boost_string,
+                            boost_sprites);
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
