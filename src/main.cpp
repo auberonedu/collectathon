@@ -11,6 +11,8 @@
 #include <bn_backdrop.h>
 #include <bn_color.h>
 
+#include "bn_timer.h"
+#include "bn_timers.h"
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_coin.h"
 #include "bn_sprite_items_square.h"
@@ -33,8 +35,8 @@ static constexpr int MAX_X = bn::display::width() / 2;
 static constexpr int MAX_SCORE_CHARS = 11;
 
 // Score location
-static constexpr int SCORE_X = 70;
-static constexpr int SCORE_Y = -70;
+static constexpr int SCORE_X = -85;
+static constexpr int SCORE_Y = -50;
 
 // Start location of player sprite
 static constexpr int startPosX = 0;
@@ -54,8 +56,18 @@ int main()
     bn::random rng = bn::random();
 
     // Will hold the sprites for the score
-    bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
+    bn::vector<bn::sprite_ptr, 32> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+
+    // timer variables
+    bn::vector<bn::sprite_ptr, 32> time_sprites = {};
+    int start_time = 30; 
+    int time = start_time;
+    bn::timer timer;
+    uint64_t ticks = 0;
+
+    bn::vector<bn::sprite_ptr, 64> text_sprites;
+    text_generator.set_center_alignment();
 
     int score = 0;
 
@@ -132,6 +144,8 @@ int main()
             player.set_position(startPosX, startPosY);
             score = 0;
             curBoosts = useableBoostsMax; // reset boosts
+            ticks = 0;
+            timer.restart();
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -160,13 +174,45 @@ int main()
                 curBoosts++;
             }
         }
+        // add timer
+        ticks += timer.elapsed_ticks_with_restart();
+        int64_t seconds = time - (ticks / bn::timers::ticks_per_second());
+        if (seconds < 0)
+            seconds = 0;
+        bn::string<32> time_string("Time Remaining:");
+        time_string.append(bn::to_string<MAX_SCORE_CHARS>(seconds));
+        time_sprites.clear();
+        text_generator.generate(-50, -70,
+                                time_string,
+                                time_sprites);
 
         // Update score display
-        bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
+        bn::string<32> score_string("Score:");
+        score_string.append(bn::to_string<MAX_SCORE_CHARS>(score));
         score_sprites.clear();
         text_generator.generate(SCORE_X, SCORE_Y,
                                 score_string,
                                 score_sprites);
+
+        // add end game screen and restart button
+        while (seconds == 0)
+        {
+            if (bn::keypad::start_pressed())
+            {
+                treasure.set_position(0, 0);
+                player.set_position(startPosX, startPosY);
+                score = 0;
+                curBoosts = useableBoostsMax; // reset boosts
+                ticks = 0;
+                timer.restart();
+                seconds = start_time;
+            }
+            text_sprites.clear();
+            text_generator.generate(0, 0, "Score: " + bn::to_string<MAX_SCORE_CHARS>(score), text_sprites);
+            text_generator.generate(0,-16, "Press START to play again", text_sprites);
+            bn::core::update();
+            text_sprites.clear();
+        }
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
