@@ -1,6 +1,8 @@
 # COLLECTATHON!
 For the Collectathon Assignment / SDEV301 Systems Programming. Waves 1 - 6 completed. See planning.md for full game-creation context.
 
+URL: https://ladygalatear.github.io/collectathon
+
 # OVERVIEW / INTRODUCTION
 <p align="center">
 Forked from https://github.com/auberonedu/collectathon. Green River SDEV BAS project for Cohort 23. For the class SDEV301, Systems Programming.
