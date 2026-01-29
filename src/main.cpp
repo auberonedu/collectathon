@@ -6,6 +6,7 @@
 #include <bn_rect.h>
 #include <bn_sprite_ptr.h>
 #include <bn_sprite_text_generator.h>
+#include <bn_sprite_tiles_ptr.h>
 #include <bn_size.h>
 #include <bn_string.h>
 #include <bn_backdrop.h>
@@ -114,6 +115,25 @@ int main()
         {
             player.set_y(player.y() + speed);
         }
+
+        // Start of animation
+        if(bn::keypad::right_held())
+        {
+            player.set_tiles(bn::sprite_items::crab.tiles_item().create_tiles(0));
+        }
+        else if(bn::keypad::left_held())
+        {
+            player.set_tiles(bn::sprite_items::crab.tiles_item().create_tiles(2));
+        }
+        else if(bn::keypad::up_held())
+        {
+            player.set_tiles(bn::sprite_items::crab.tiles_item().create_tiles(4));
+        }
+        else if(bn::keypad::down_held())
+        {
+            player.set_tiles(bn::sprite_items::crab.tiles_item().create_tiles(6));
+        }
+
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
