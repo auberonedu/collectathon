@@ -51,9 +51,6 @@ int main()
 {
     bn::core::init();
 
-    // Backdrop color
-    bn::backdrop::set_color(bn::color(31, 0, 0));
-
     bn::random rng = bn::random();
 
     // Will hold the sprites for the score
@@ -80,9 +77,12 @@ int main()
     bool paused = true;
 
     //holds pause text in list
-    bn::vector<bn::sprite_ptr, 10> score_text_sprites;
-    bn::vector<bn::sprite_ptr, 20> paused_sprites;
-    bn::vector<bn::sprite_ptr, 20> instruction_sprites;
+    bn::vector<bn::sprite_ptr, 8> score_text_sprites;
+    bn::vector<bn::sprite_ptr, 32> paused_sprites;
+    bn::vector<bn::sprite_ptr, 24> instruction_sprites;
+
+    // Backdrop color
+    bn::backdrop::set_color(bn::color(31, 0, 0));
 
     //adds text to list
     text_generator.generate(50, -70, "Score:", score_text_sprites);
