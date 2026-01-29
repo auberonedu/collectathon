@@ -224,7 +224,7 @@ int main()
         // Update body segments to follow the head
         for (int i = 0; i < body_segments.size(); ++i)
         {
-            int tail_index = (i + 1) * 10;
+            int tail_index = (i + 1) * 8;
             if (tail_index < head_positions.size())
             {
                 body_segments[i].set_position(head_positions[tail_index]);
@@ -242,7 +242,8 @@ int main()
                                           TREASURE_SIZE.height());
 
         // Check for collision between player (head) and body segments
-        for (int i = 0; i < body_segments.size(); ++i)
+        int start_index = 3;
+        for (int i = start_index; i < body_segments.size(); ++i)
         {
             bn::rect body_rect = bn::rect(body_segments[i].x().round_integer(),
                                           body_segments[i].y().round_integer(),
