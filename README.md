@@ -2,7 +2,8 @@
 sdev301
 
 # How to play the game?
-- Just use your imagination but in general it a simple game where you can have some boost if you wanna be faster but it limited. 
+- Just use your imagination but in general it a simple game where you can have some boost if you wanna be faster but it limited to 3 times. 
+- and also will have 'slow' sprites which make player slower.
 
 Kate and Kelley 1-5 and 6
 Hopefully we finish this today 
