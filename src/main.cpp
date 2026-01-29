@@ -28,7 +28,7 @@ static constexpr bn::fixed TREASURE_SPEED = .25;
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
 static constexpr bn::size MEGA_TREASURE_SIZE = {16, 16};
-static constexpr bn::size ENEMYBOX_SIZE={32,32};
+static constexpr bn::size ENEMYBOX_SIZE = {32, 32};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -61,7 +61,7 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
     bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(0, 0);
-    bn::vector<bn::sprite_ptr, 8> smallEnemies={}; 
+    bn::vector<bn::sprite_ptr, 8> smallEnemies = {};
 
     int boostDuration = 60;  // How long the boost will last in frames(?)
     int boostTime = 0;       // Decreases while boosting
@@ -70,17 +70,16 @@ int main()
 
     int currentSpeedMultiplier = 1; // The Current multiplier for speed, gets changed to 2 when boosting.
 
-    int enemyDirectionX = 1; //Used to determine movement logic for enemybox on x axis
+    int enemyDirectionX = 1; // Used to determine movement logic for enemybox on x axis
     int enemyDirectionY = 1; // Used to determine movement logic for enemybox on y axis
-    int enemySpeedX=1;
-    int enemySpeedY=1;
-    int smallenemyDirectionX=0;
-    int smallenemyDirectionY=1;
+    int enemySpeedX = 1;
+    int enemySpeedY = 1;
+    int smallenemyDirectionX = 0;
+    int smallenemyDirectionY = 1;
     for (int i = 0; i < 7; i++)
     {
-        smallEnemies.push_back(bn::sprite_items::smallenemy.create_sprite(  100,100));
-        // small.set_x(small.x() + smallenemyDirectionX);
-        // small.set_y(small.y() + smallenemyDirectionY);
+        smallEnemies.push_back(bn::sprite_items::smallenemy.create_sprite(100, 100));
+
     }
 
     while (true)
@@ -165,8 +164,8 @@ int main()
                                           ENEMYBOX_SIZE.width(),
                                           ENEMYBOX_SIZE.height());
 
-            // If the bounding boxes overlap, set the treasure to a new location an increase score
-            if (player_rect.intersects(treasure_rect))
+        // If the bounding boxes overlap, set the treasure to a new location an increase score
+        if (player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
@@ -175,7 +174,11 @@ int main()
 
             score++;
 
-
+            for (bn::sprite_ptr small: smallEnemies)
+            {
+                small.set_x(0);
+                small.set_y(0);
+            }
         }
 
         // Move treasure away from player
@@ -245,16 +248,16 @@ int main()
             treasure = bn::sprite_items::megadot.create_sprite(0, 0);
 
             treasure_rect = bn::rect(treasure.x().round_integer(),
-                                          treasure.y().round_integer(),
-                                          MEGA_TREASURE_SIZE.width(),
-                                          MEGA_TREASURE_SIZE.height());
+                                     treasure.y().round_integer(),
+                                     MEGA_TREASURE_SIZE.width(),
+                                     MEGA_TREASURE_SIZE.height());
         }
 
-        //enemy logic
+        // enemy logic
 
-        //sets ememy dircetions
+        // sets ememy dircetions
 
-        //moves on x axis when the score is a even number
+        // moves on x axis when the score is a even number
         if (enemybox.x() >= MAX_X)
         {
             enemyDirectionX = -1;
@@ -278,11 +281,24 @@ int main()
 
         enemybox.set_x(enemybox.x() + enemySpeedX * enemyDirectionX);
         enemybox.set_y(enemybox.y() + enemySpeedY * enemyDirectionY);
-        
 
-        //detects if player and enemy hit
-        if(player_rect.intersects(enemybox_rect)){
-            if( score>0){
+        //sets smal lenemy
+        for (bn::sprite_ptr small : smallEnemies)
+        {
+            small.set_x(small.x()+smallenemyDirectionX);
+            small.set_y(small.y()+smallenemyDirectionY);
+            if(smallenemyDirectionX<2){
+                smallenemyDirectionX +=.5;
+            }
+        }
+        // for (int i=0; i<7;i++){
+        //     smallEnemies[i].set_x(smallEnemies[i].x()+smallenemyDirectionX+i);
+        // }
+        // detects if player and enemy hit
+        if (player_rect.intersects(enemybox_rect))
+        {
+            if (score > 0)
+            {
                 score--;
             }
             player.set_x(10);
