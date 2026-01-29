@@ -28,5 +28,6 @@ give player speed boost when pressing A
 
 ## Brainstorming game ideas
 
+
 ## Plan for implementing game
 
