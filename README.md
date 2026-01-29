@@ -6,6 +6,7 @@ For the Collectathon Assignment / SDEV301 Systems Programming. Waves 1 - 6 compl
 Forked from https://github.com/auberonedu/collectathon. Green River SDEV BAS project for Cohort 23. For the class SDEV301, Systems Programming.
 <br><br>
 -- Credits --
+<br>
 Sprites & Animation by https://github.com/LadyGalatear
 <br>
 *
