@@ -64,7 +64,9 @@ int enemySpeedX = 1;
 int enemySpeedY = 1;
 
 // The player's score
+int highScore = 0;
 int score = 0;
+bool gameActive = false;
 
 // Handles speed boost logic
 void SpeedBoost()
@@ -131,7 +133,7 @@ void PlayerMovement(bn::sprite_ptr player)
     }
 }
 
-void ResetButton(bn::sprite_ptr player, bn::sprite_ptr treasure)
+void ResetButton(bn::sprite_ptr player, bn::sprite_ptr treasure, bn::sprite_ptr enemyBox)
 {
     // Reset Button
     if (bn::keypad::start_pressed())
@@ -142,8 +144,13 @@ void ResetButton(bn::sprite_ptr player, bn::sprite_ptr treasure)
         treasure.set_x(0);
         treasure.set_y(0);
 
+        enemyBox.set_x(-xCord);
+        enemyBox.set_y(yCord);
+
         // Reset boost
         boostCount = boostDefault;
+
+        gameActive = false;
 
         score = 0;
     }
@@ -266,76 +273,92 @@ int main()
     bn::backdrop::set_color(bn::color(21, 15, 15));
     bn::random rng = bn::random();
 
+    // Start Text Vector
+    bn::vector<bn::sprite_ptr, 11> start_sprites = {};
     // Will hold the sprites for the score
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
+    bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(-xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
-    bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(0, 0);
 
     while (true)
     {
-        SpeedBoost();
-        PlayerBorderLoop(player);
-        PlayerMovement(player);
-        ResetButton(player, treasure);
-
-        // The bounding boxes of the player and treasure, snapped to integer pixels
-        bn::rect player_rect = bn::rect(player.x().round_integer(),
-                                        player.y().round_integer(),
-                                        PLAYER_SIZE.width(),
-                                        PLAYER_SIZE.height());
-        bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
-                                          treasure.y().round_integer(),
-                                          treasureSizeX,
-                                          treasureSizeY);
-        bn::rect enemybox_rect = bn::rect(enemybox.x().round_integer(),
-                                          enemybox.y().round_integer(),
-                                          ENEMYBOX_SIZE.width(),
-                                          ENEMYBOX_SIZE.height());
-
-        // If the bounding boxes overlap, set the treasure to a new location and increase score
-        if (player_rect.intersects(treasure_rect))
+        if (gameActive)
         {
-            OnPlayerTouchTreasure(treasure, rng);
-            // If score > 10, treasure sprite becomes mega - Seadrah
-            if (score == 10)
-            {
-                treasure = bn::sprite_items::megadot.create_sprite(0, 0);
+            SpeedBoost();
+            PlayerBorderLoop(player);
+            PlayerMovement(player);
+            ResetButton(player, treasure, enemybox);
 
-                // This rect only exists for the frame it was created
-                treasure_rect = bn::rect(treasure.x().round_integer(),
-                                         treasure.y().round_integer(),
-                                         MEGA_TREASURE_SIZE.width(),
-                                         MEGA_TREASURE_SIZE.height());
-                treasureSizeX = MEGA_TREASURE_SIZE.width();
-                treasureSizeY = MEGA_TREASURE_SIZE.height();
+            // The bounding boxes of the player and treasure, snapped to integer pixels
+            bn::rect player_rect = bn::rect(player.x().round_integer(),
+                                            player.y().round_integer(),
+                                            PLAYER_SIZE.width(),
+                                            PLAYER_SIZE.height());
+            bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
+                                              treasure.y().round_integer(),
+                                              treasureSizeX,
+                                              treasureSizeY);
+            bn::rect enemybox_rect = bn::rect(enemybox.x().round_integer(),
+                                              enemybox.y().round_integer(),
+                                              ENEMYBOX_SIZE.width(),
+                                              ENEMYBOX_SIZE.height());
+
+            // If the bounding boxes overlap, set the treasure to a new location and increase score
+            if (player_rect.intersects(treasure_rect))
+            {
+                OnPlayerTouchTreasure(treasure, rng);
+                // If score > 10, treasure sprite becomes mega - Seadrah
+                if (score == 10)
+                {
+                    treasure = bn::sprite_items::megadot.create_sprite(0, 0);
+
+                    // This rect only exists for the frame it was created
+                    treasure_rect = bn::rect(treasure.x().round_integer(),
+                                             treasure.y().round_integer(),
+                                             MEGA_TREASURE_SIZE.width(),
+                                             MEGA_TREASURE_SIZE.height());
+                    treasureSizeX = MEGA_TREASURE_SIZE.width();
+                    treasureSizeY = MEGA_TREASURE_SIZE.height();
+                }
+            }
+            TreasureMovement(treasure, player);
+
+            // Update score display
+            bn::string<MAX_SCORE_CHARS>
+                score_string = bn::to_string<MAX_SCORE_CHARS>(score);
+            score_sprites.clear();
+            text_generator.generate(SCORE_X, SCORE_Y,
+                                    score_string,
+                                    score_sprites);
+
+            // Enemy logic
+            // Sets enemy directions
+            EnemyMovement(enemybox, rng);
+            // Detects if player and enemy hit
+            if (player_rect.intersects(enemybox_rect))
+            {
+                OnPlayerTouchEnemy(player);
+                ResetEnemy(enemybox, rng);
+            }
+
+            // Update RNG seed every frame so we don't get the same sequence of positions every time
+            rng.update();
+        }
+        else
+        {
+            start_sprites.clear();
+            text_generator.generate(0, 0,
+                                    "Press Start",
+                                    start_sprites);
+            if (bn::keypad::start_pressed())
+            {
+                start_sprites.clear();
+                gameActive = true;
             }
         }
-        TreasureMovement(treasure, player);
-
-        // Update score display
-        bn::string<MAX_SCORE_CHARS>
-            score_string = bn::to_string<MAX_SCORE_CHARS>(score);
-        score_sprites.clear();
-        text_generator.generate(SCORE_X, SCORE_Y,
-                                score_string,
-                                score_sprites);
-
-        // Enemy logic
-        // Sets enemy directions
-        EnemyMovement(enemybox, rng);
-        // Detects if player and enemy hit
-        if (player_rect.intersects(enemybox_rect))
-        {
-            OnPlayerTouchEnemy(player);
-            ResetEnemy(enemybox, rng);
-        }
-
-        // Update RNG seed every frame so we don't get the same sequence of positions every time
-        rng.update();
-
         bn::core::update();
     }
 }
