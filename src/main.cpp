@@ -18,13 +18,16 @@
 #include <bn_sprite_palette_ptr.h>
 #include <bn_sprite_palettes.h>
 
+/** what to add: display of treasure, less speed in normal mode -- maybe sound effect? **/
+
 // Pixels / Frame player moves at - INCREASED SPEED
-static constexpr bn::fixed SPEED = 4;  // Changed from 3 to 4 for faster movement
+static constexpr bn::fixed SPEED = 4; // Changed from 3 to 4 for faster movement
+// try to decrease to 2 -- speed is very fast in regular.
 
 // Width and height of the player, treasure, and hazard bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
-static constexpr bn::size HAZARD_SIZE = {8, 8};  // New: size for slow hazard
+static constexpr bn::size HAZARD_SIZE = {8, 8}; // New: size for slow hazard
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -38,10 +41,8 @@ static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 50;
 static constexpr int TREASURE_START_Y = -20;
 
-
-static constexpr int HAZARD_START_X = 0;  //  hazard starting position - searched on yt
+static constexpr int HAZARD_START_X = 0; //  hazard starting position - searched on yt
 static constexpr int HAZARD_START_Y = 0;
-
 
 static constexpr int MAX_SCORE_CHARS = 11;
 
@@ -52,11 +53,11 @@ static constexpr int SCORE_Y = -70;
 // Boost settings
 static constexpr int BOOST_MAX_USES = 3;
 static constexpr int BOOST_DURATION_FRAMES = 60;
-static constexpr bn::fixed BOOST_SPEED = 8;  // Increased from 6 to 8
+static constexpr bn::fixed BOOST_SPEED = 8; // Increased from 6 to 8
 
 // Slow speed
-static constexpr int SLOW_DURATION_FRAMES = 90;  // How long slow effect lasts
-static constexpr bn::fixed SLOW_SPEED = 1.5;  // Speed when slowed down
+static constexpr int SLOW_DURATION_FRAMES = 90; // How long slow effect lasts
+static constexpr bn::fixed SLOW_SPEED = 1.5;    // Speed when slowed down
 
 int main()
 {
@@ -75,58 +76,58 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
-    bn::sprite_ptr hazard = bn::sprite_items::dot.create_sprite(HAZARD_START_X, HAZARD_START_Y);  // New: slow hazard sprite
+    bn::sprite_ptr hazard = bn::sprite_items::dot.create_sprite(HAZARD_START_X, HAZARD_START_Y); // New: slow hazard sprite
 
-    // grab the player's palette 
+    // grab the player's palette
     bn::sprite_palette_ptr player_palette = player.palette();
 
     // speed boost
     int boost_left = BOOST_MAX_USES;
     int boost_frames_left = 0;
-    
-    // slow effect 
+
+    // slow effect
     int slow_frames_left = 0;
 
-    while(true)
+    while (true)
     {
-        if(bn::keypad::start_pressed())
+        if (bn::keypad::start_pressed())
         {
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
 
-            hazard.set_position(HAZARD_START_X, HAZARD_START_Y);  // Resets the hazard position
+            hazard.set_position(HAZARD_START_X, HAZARD_START_Y); // Resets the hazard position
             score = 0;
             boost_left = BOOST_MAX_USES;
             boost_frames_left = 0;
-            slow_frames_left = 0;  // Reset slow effect
+            slow_frames_left = 0; // Reset slow effect
 
             player.set_visible(true);
             bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
         }
 
         // boost when press A
-        if(bn::keypad::a_pressed() && boost_left > 0 && boost_frames_left == 0)
+        if (bn::keypad::a_pressed() && boost_left > 0 && boost_frames_left == 0)
         {
             --boost_left;
             boost_frames_left = BOOST_DURATION_FRAMES;
         }
 
-        // choose base speed 
+        // choose base speed
         bn::fixed current_speed = SPEED;
 
         // Check if slow
-        if(slow_frames_left > 0)
+        if (slow_frames_left > 0)
         {
             current_speed = SLOW_SPEED;
-            
-            // Blue fade 
-            bn::sprite_palettes::set_fade(bn::color(0, 0, 31), 0.4);  // Blue fade
-            
+
+            // Blue fade
+            bn::sprite_palettes::set_fade(bn::color(0, 0, 31), 0.4); // Blue fade
+
             --slow_frames_left;
         }
 
         // Boost
-        if(boost_frames_left > 0)
+        if (boost_frames_left > 0)
         {
             current_speed = BOOST_SPEED;
 
@@ -134,11 +135,11 @@ int main()
             player.set_visible((boost_frames_left / 5) % 2 == 0);
 
             // Orange fade
-            bn::sprite_palettes::set_fade(bn::color(31, 16, 0), 0.5);  // Orange fade
-            
+            bn::sprite_palettes::set_fade(bn::color(31, 16, 0), 0.5); // Orange fade
+
             --boost_frames_left;
         }
-        else if(slow_frames_left == 0)  
+        else if (slow_frames_left == 0)
         {
             player.set_visible(true);
             // reset palette effect when not boosted or slowed
@@ -146,42 +147,42 @@ int main()
         }
 
         // Horizontal move: use current_speed
-        if(bn::keypad::left_held())
+        if (bn::keypad::left_held())
         {
             player.set_x(player.x() - current_speed);
         }
-        if(bn::keypad::right_held())
+        if (bn::keypad::right_held())
         {
             player.set_x(player.x() + current_speed);
         }
 
         // Vertical move
-        bn::fixed vertical_speed = current_speed * 1.5; 
+        bn::fixed vertical_speed = current_speed * 1.5;
 
-        if(bn::keypad::up_held())
+        if (bn::keypad::up_held())
         {
             player.set_y(player.y() - vertical_speed);
         }
-        if(bn::keypad::down_held())
+        if (bn::keypad::down_held())
         {
             player.set_y(player.y() + vertical_speed);
         }
 
         // loop for min
-        if(player.x() < MIN_X)
+        if (player.x() < MIN_X)
         {
             player.set_x(MAX_X);
         }
-        else if(player.x() > MAX_X)
+        else if (player.x() > MAX_X)
         {
             player.set_x(MIN_X);
         }
 
-        if(player.y() < MIN_Y)
+        if (player.y() < MIN_Y)
         {
             player.set_y(MAX_Y);
         }
-        else if(player.y() > MAX_Y)
+        else if (player.y() > MAX_Y)
         {
             player.set_y(MIN_Y);
         }
@@ -196,13 +197,13 @@ int main()
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
 
-        bn::rect hazard_rect = bn::rect(hazard.x().round_integer(),  //hazard bounding box
+        bn::rect hazard_rect = bn::rect(hazard.x().round_integer(), // hazard bounding box
                                         hazard.y().round_integer(),
                                         HAZARD_SIZE.width(),
                                         HAZARD_SIZE.height());
 
         // If the bounding boxes overlap with treasure, set the treasure to a new location and increase score
-        if(player_rect.intersects(treasure_rect))
+        if (player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
@@ -212,13 +213,11 @@ int main()
             ++score;
         }
 
-
-        if(player_rect.intersects(hazard_rect))
+        if (player_rect.intersects(hazard_rect))
         {
             // slow affect applies
             slow_frames_left = SLOW_DURATION_FRAMES;
-            
-    
+
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             hazard.set_position(new_x, new_y);

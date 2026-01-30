@@ -46,3 +46,12 @@ try to see if i can add faster speed.
 
 -------- 
 I still wanna try the shaking when boost but I may do it afterward since I need to do some homework, so ... to be continue
+
+
+
+## wave 7 -- improvements/planning:
+Add a timer (15 secs) 
+Slow down the regular speed of the player sprite
+Add sound effects when dying using jsfxr
+Add another sprite (could be designed) that chases the player
+
