@@ -15,6 +15,9 @@
 #include "bn_timers.h"
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_coin.h"
+#include "bn_sprite_items_charactersprite.h"
+#include "bn_sprite_items_hourglass.h"
+
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 
@@ -23,7 +26,7 @@ static constexpr bn::fixed SPEED = 2;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
-static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size TREASURE_SIZE = {10, 10};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -54,7 +57,6 @@ int main()
 
     // change backdrop color
     bn::backdrop::set_color(bn::color(20, 20, 31));
-
     bn::random rng = bn::random();
 
     // Will hold the sprites for the score
@@ -63,18 +65,22 @@ int main()
 
     // timer variables
     bn::vector<bn::sprite_ptr, 32> time_sprites = {};
-    int start_time = 5;
+    int start_time = 15;
     int time = start_time;
     bn::timer timer;
     uint64_t ticks = 0;
 
-    bn::vector<bn::sprite_ptr, 64> text_sprites;
+    bn::vector<bn::sprite_ptr, 128> text_sprites;
     text_generator.set_center_alignment();
 
     int score = 0;
 
-    // bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
-    bn::sprite_ptr player = bn::sprite_items::dot.create_sprite(startPosX, startPosY); // KJeans Changed
+    bn::sprite_ptr player = bn::sprite_items::charactersprite.create_sprite(startPosX, startPosY); // KJeans Changed
+
+    bn::sprite_ptr timeBoost = bn::sprite_items::hourglass.create_sprite(1000, 1000);
+    bool isSpawnedTB = false;
+    int timeBoostChance = 0;
+
     int newCoinX = rng.get_int(MIN_X, MAX_X);
     int newCoinY = rng.get_int(MIN_Y, MAX_Y);
     bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(newCoinX, newCoinY);
@@ -184,6 +190,38 @@ int main()
                 availableBoosts++;
             }
         }
+
+        /// KJeans  TIME BOOST LOGIC BEGIN///////////////////////////////////////////////////////////////////////
+        if (!isSpawnedTB) // verify a boost is not already spawned
+        {
+            timeBoostChance = rng.get_int(1, 100000);
+        }
+        if (timeBoostChance > 99900 && !isSpawnedTB) // if valid spawnchance value, spawn in a timeBoost and set isSpawnedTB bool true to prevent more spawning
+        {
+
+            int newX = rng.get_int(MIN_X, MAX_X);
+            int newY = rng.get_int(MIN_Y, MAX_Y);
+            timeBoost.set_position(newX, newY);
+
+            isSpawnedTB = true;
+        }
+        // Collision logic
+        bn::rect timeBoost_rect = bn::rect(timeBoost.x().round_integer(), timeBoost.y().round_integer(), TREASURE_SIZE.width(), TREASURE_SIZE.height());
+
+        if (player_rect.intersects(timeBoost_rect))
+        {
+            time += 3;
+            timeBoost.set_position(1000, 1000); // Spawns offscreen because i dont know how to delete
+            isSpawnedTB = false;
+        }
+        /// TIME BOOST LOGIC END////////////////////////////////////////////////////////////////////
+
+        // KJeans - boost text
+        text_sprites.clear();
+        bn::string<32> boost_string("Boosts:");
+        boost_string += bn::to_string<MAX_SCORE_CHARS>(availableBoosts);
+        text_generator.generate(SCORE_X + 3, SCORE_Y + 12, boost_string, text_sprites);
+
         // add timer
         ticks += timer.elapsed_ticks_with_restart();
         int64_t seconds = time - (ticks / bn::timers::ticks_per_second());
