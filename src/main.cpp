@@ -41,10 +41,12 @@ static constexpr int SCORE_Y = -50;
 // Start location of player sprite
 static constexpr int startPosX = 0;
 static constexpr int startPosY = 0;
-int boost = 0;
+// boost speed values
+int boostSpeed = 0;
 static constexpr int boostSpeedMax = 10;
+// Amount of boosts values
 static constexpr int useableBoostsMax = 3;
-int curBoosts = useableBoostsMax;
+int availableBoosts = useableBoostsMax;
 
 int main()
 {
@@ -61,7 +63,7 @@ int main()
 
     // timer variables
     bn::vector<bn::sprite_ptr, 32> time_sprites = {};
-    int start_time = 30;
+    int start_time = 5;
     int time = start_time;
     bn::timer timer;
     uint64_t ticks = 0;
@@ -73,45 +75,47 @@ int main()
 
     // bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
     bn::sprite_ptr player = bn::sprite_items::dot.create_sprite(startPosX, startPosY); // KJeans Changed
-
-    bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(0, 0);
+    int newCoinX = rng.get_int(MIN_X, MAX_X);
+    int newCoinY = rng.get_int(MIN_Y, MAX_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(newCoinX, newCoinY);
 
     while (true)
 
     {
-        // KJans added speed boost;
+        // -KJeans added speed boostSpeed;
         if (bn::keypad::a_pressed())
         {
-            if (boost == 0 && curBoosts > 0)
+            if (boostSpeed == 0 && availableBoosts > 0)
             {
-                boost = boostSpeedMax;
+                boostSpeed = boostSpeedMax;
             }
         }
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - (SPEED + boost));
+            player.set_x(player.x() - (SPEED + boostSpeed));
         }
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + (SPEED + boost));
+            player.set_x(player.x() + (SPEED + boostSpeed));
         }
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - (SPEED + boost));
+            player.set_y(player.y() - (SPEED + boostSpeed));
         }
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + (SPEED + boost));
+            player.set_y(player.y() + (SPEED + boostSpeed));
         }
 
-        // Boost must adjust value after movement event occurs
-        if (boost > 0)
+        // KJeans- boostSpeed must adjust value after movement event occurs
+        if (boostSpeed > 0)
         {
-            boost--; // decrement boost per frame
-            if (boost == 0)
+            boostSpeed--; // KJeans- decrement boostSpeed per frame
+
+            if (boostSpeed == 0) // KJeans- this means 1 boostSpeed has finished its cycle and should decrement available boostd
             {
-                curBoosts--;
+                availableBoosts--;
             }
         }
 
@@ -140,12 +144,18 @@ int main()
         // add restart button
         if (bn::keypad::start_pressed())
         {
-            treasure.set_position(0, 0);
+            // Kjeans- creates rng values to spawn treasure on restart
+            int newCoin_x = rng.get_int(MIN_X, MAX_X);
+            int newCoin_y = rng.get_int(MIN_Y, MAX_Y);
+            treasure.set_position(newCoin_x, newCoin_y);
+
             player.set_position(startPosX, startPosY);
             score = 0;
-            curBoosts = useableBoostsMax; // reset boosts
+            availableBoosts = useableBoostsMax; // reset boosts
             ticks = 0;
             timer.restart();
+
+            bn::backdrop::set_color(bn::color(20, 20, 31));
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -168,10 +178,10 @@ int main()
 
             score++;
 
-            // kjeans added funtionality so that every 2 points the player gets another boost
+            // KJeans- added funtionality so that every 2 points the player gets another available boost
             if (score % 2 == 0 && score != 0)
             {
-                curBoosts++;
+                availableBoosts++;
             }
         }
         // add timer
@@ -197,15 +207,22 @@ int main()
         // add end game screen and restart button
         while (seconds == 0)
         {
+            bn::backdrop::set_color(bn::color(0, 0, 0));
             if (bn::keypad::start_pressed())
             {
-                treasure.set_position(0, 0);
+                // Kjeans- creates rng values to spawn treasure on restart
+                int newCoin_x = rng.get_int(MIN_X, MAX_X);
+                int newCoin_y = rng.get_int(MIN_Y, MAX_Y);
+                treasure.set_position(newCoin_x, newCoin_y);
+
                 player.set_position(startPosX, startPosY);
                 score = 0;
-                curBoosts = useableBoostsMax; // reset boosts
+                availableBoosts = useableBoostsMax; // reset boosts
                 ticks = 0;
                 timer.restart();
                 seconds = start_time;
+
+                bn::backdrop::set_color(bn::color(20, 20, 31));
             }
             text_sprites.clear();
             text_generator.generate(0, 0, "Score: " + bn::to_string<MAX_SCORE_CHARS>(score), text_sprites);
@@ -223,3 +240,8 @@ int main()
         bn::core::update();
     }
 }
+
+// commit comment
+//  added random treasure spawn on restart
+//  changed boost related value names to represent more accurately what they do
+//  reset backdrop and set backdrop
