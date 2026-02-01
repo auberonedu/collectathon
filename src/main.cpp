@@ -11,6 +11,7 @@
 #include <bn_backdrop.h>
 #include <bn_color.h>
 #include <bn_math.h>
+#include <bn_music.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
@@ -18,6 +19,11 @@
 #include "bn_sprite_items_enemy.h"
 #include "bn_sprite_items_megadot.h"
 #include "bn_sprite_items_enemydot.h"
+
+// Sound effect items
+#include "bn_sound_items.h"
+
+
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 2;
@@ -74,6 +80,7 @@ void SpeedBoost()
     // Speed boost
     if (bn::keypad::a_pressed() && boostCount > 0)
     {
+        bn::sound_items::jump.play();
         if (boostCount > 0)
         {
             boostCount--;
@@ -138,6 +145,10 @@ void ResetButton(bn::sprite_ptr player, bn::sprite_ptr treasure, bn::sprite_ptr 
     // Reset Button
     if (bn::keypad::start_pressed())
     {
+        // Play sound effect
+        bn::sound_items::blip_select.play();
+
+        // Set coords
         player.set_x(xCord);
         player.set_y(yCord);
 
@@ -158,6 +169,9 @@ void ResetButton(bn::sprite_ptr player, bn::sprite_ptr treasure, bn::sprite_ptr 
 
 void OnPlayerTouchTreasure(bn::sprite_ptr treasure, bn::random rng)
 {
+    // Play sound effect
+    bn::sound_items::pickup_coin.play();
+
     // Jump to any random point in the screen
     int new_x = rng.get_int(MIN_X, MAX_X);
     int new_y = rng.get_int(MIN_Y, MAX_Y);
@@ -254,6 +268,9 @@ void EnemyMovement(bn::sprite_ptr enemybox, bn::random rng)
 
 void OnPlayerTouchEnemy(bn::sprite_ptr player)
 {
+    // Play sound effect
+    bn::sound_items::hit_hurt.play();
+
     if (score > 0)
     {
         score--;
@@ -288,10 +305,12 @@ int main()
     bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(-xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
+
     while (true)
     {
         if (gameActive)
         {
+            
             SpeedBoost();
             PlayerBorderLoop(player);
             PlayerMovement(player);
@@ -316,8 +335,12 @@ int main()
             {
                 OnPlayerTouchTreasure(treasure, rng);
                 // If score > 10, treasure sprite becomes mega - Seadrah
-                if (score == 10)
+                if (score == 10 && treasureSizeX != MEGA_TREASURE_SIZE.width())
                 {
+                    // Play sound effect
+                    bn::sound_items::power_up.play();
+
+                    // Update sprite & hitbox
                     treasure = bn::sprite_items::megadot.create_sprite(0, 0);
 
                     // This rect only exists for the frame it was created
@@ -366,6 +389,8 @@ int main()
                                     high_score_sprites);
             if (bn::keypad::start_pressed())
             {
+                // Play sound effect
+                    bn::sound_items::blip_select.play();
                 start_sprites.clear();
                 high_score_sprites.clear();
                 gameActive = true;
