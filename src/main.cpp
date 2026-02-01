@@ -14,6 +14,7 @@
 #include <bn_music.h>
 
 #include "bn_sprite_items_dot.h"
+#include "bn_sprite_items_piggy.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_enemy.h"
@@ -124,10 +125,12 @@ void PlayerMovement(bn::sprite_ptr player)
     // Move player with d-pad
     if (bn::keypad::left_held())
     {
+        player.set_horizontal_flip(1);
         player.set_x(player.x() - SPEED * currentSpeedMultiplier);
     }
     if (bn::keypad::right_held())
     {
+        player.set_horizontal_flip(0);
         player.set_x(player.x() + SPEED * currentSpeedMultiplier);
     }
     if (bn::keypad::up_held())
@@ -301,7 +304,7 @@ int main()
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(xCord, yCord);
+    bn::sprite_ptr player = bn::sprite_items::piggy.create_sprite(xCord, yCord);
     bn::sprite_ptr enemybox = bn::sprite_items::enemydot.create_sprite(-xCord, yCord);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
