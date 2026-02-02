@@ -28,3 +28,9 @@ this is the pivotal line that imports the random to be used for generating the "
 - create an if statement for the user to react to the treasure when intersected 
 - add a body segment after each treasure is collected 
 - reset body on game end logic 
+
+## Wave 7 brainstorm from feedback
+- allow for continuous movement when a button is pressed and until a different one is pressed 
+- simple main menu with instructions
+- maybe add obstacles that appear every x amount of treasure collected
+- change our sprites a little to look more snake like and apple or bug like instead of treasure. 
