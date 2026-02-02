@@ -12,10 +12,9 @@
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
+#include "common_fixed_8x16_font.h"
 // body asset
 #include "bn_sprite_items_body.h"
-
-#include "common_fixed_8x16_font.h"
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 1;
@@ -124,26 +123,31 @@ int main()
         // Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
         bn::fixed dx = 0;
         bn::fixed dy = 0;
+        bn::fixed current_angle = 0;
 
         if (bn::keypad::left_held() && dx == 0 && dy == 0 && last_dir != Direction::RIGHT)
         {
             dx = -current_speed;
             last_dir = Direction::LEFT;
+            current_angle = bn::fixed(180);
         }
         if (bn::keypad::right_held() && dx == 0 && dy == 0 && last_dir != Direction::LEFT)
         {
             dx = current_speed;
             last_dir = Direction::RIGHT;
+            current_angle = bn::fixed(0);
         }
         if (bn::keypad::down_held() && dx == 0 && dy == 0 && last_dir != Direction::UP)
         {
             dy = current_speed;
             last_dir = Direction::DOWN;
+            current_angle = bn::fixed(270);
         }
         if (bn::keypad::up_held() && dx == 0 && dy == 0 && last_dir != Direction::DOWN)
         {
             dy = -current_speed;
             last_dir = Direction::UP;
+            current_angle = bn::fixed(90);
         }
 
         player.set_x(player.x() + dx);
