@@ -273,7 +273,7 @@ int main()
             {
                 bn::fixed_point tail_pos = head_positions.back();
                 body_segments.push_back(
-                    bn::sprite_items::square.create_sprite(tail_pos.x(), tail_pos.y()));
+                    bn::sprite_items::body.create_sprite(tail_pos.x(), tail_pos.y()));
             }
         }
 
