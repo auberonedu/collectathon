@@ -1,0 +1,8 @@
+{
+  "sounds": [
+    {
+      "name": "cure",
+      "file": "audio/cure.wav"
+    }
+  ]
+}
