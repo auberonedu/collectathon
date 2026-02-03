@@ -57,3 +57,13 @@ Make a speed boost
 - Sound plays for each action and key press (besides dpad)
 
 - Pauses the game with an if statement to keep movement speed locked to 0 
+
+## Feedback
+
+- Fix a bug that allows players to boost before pressing start
+
+- Add a countdown timer
+
+- Add a boost counter
+
+- Make the enemy get faster over time (gets faster every 3 points)
