@@ -79,8 +79,16 @@ int main()
     bn::sprite_ptr fox = bn::sprite_items::fox.create_sprite(0, 40);
     bn::sprite_ptr car = bn::sprite_items::car.create_sprite(0, -40);
 
-    bn::fixed fox_vx= 1;
-    bn::fixed car_yv = 2;
+    // Fox chase speed (slower than player so it's beatable)
+    bn::fixed fox_speed = 1.5;
+    
+    // Car random movement
+    bn::fixed car_vx = 1;
+    bn::fixed car_vy = 1;
+    int car_direction_timer = 0;
+
+    // Hide fox initially (it appears at level 15)
+    fox.set_visible(false);
 
     while (true)
     {
@@ -133,19 +141,41 @@ int main()
             player.set_y(MIN_Y);
         }
 
-        // Move fox horizontally
-        fox.set_x(fox.x() + fox_vx);
-        if(fox.x() > MAX_X)
+        // Fox chasing behavior (only at level 15+)
+        if (score >= 15)
         {
-            fox.set_x(MIN_X);
+            fox.set_visible(true);
+            
+            // Calculate direction from fox to player
+            bn::fixed dx = player.x() - fox.x();
+            bn::fixed dy = player.y() - fox.y();
+            
+            // Normalize and move fox towards player
+            bn::fixed distance = bn::sqrt(dx * dx + dy * dy);
+            if (distance > 0)
+            {
+                fox.set_x(fox.x() + (dx / distance) * fox_speed);
+                fox.set_y(fox.y() + (dy / distance) * fox_speed);
+            }
         }
-        else if(fox.x() < MIN_X)
+        else
         {
-            fox.set_x(MAX_X);
+            fox.set_visible(false);
         }
 
-        // Move car vertically
-        car.set_y(car.y() + car_yv);
+        // Car random movement
+        car.set_x(car.x() + car_vx);
+        car.set_y(car.y() + car_vy);
+        
+        // Wrap car around screen
+        if(car.x() > MAX_X)
+        {
+            car.set_x(MIN_X);
+        }
+        else if(car.x() < MIN_X)
+        {
+            car.set_x(MAX_X);
+        }
         if(car.y() > MAX_Y)
         {
             car.set_y(MIN_Y);
@@ -153,6 +183,22 @@ int main()
         else if(car.y() < MIN_Y)
         {
             car.set_y(MAX_Y);
+        }
+        
+        // Change car direction randomly every 60-120 frames
+        car_direction_timer++;
+        if(car_direction_timer > 60 + rng.get_int(60))
+        {
+            car_direction_timer = 0;
+            // Random velocities between -2 and 2
+            car_vx = rng.get_int(-2, 2);
+            car_vy = rng.get_int(-2, 2);
+            
+            // Make sure car is always moving
+            if(car_vx == 0 && car_vy == 0)
+            {
+                car_vx = 1;
+            }
         }
 
         // Reset game if start is pressed
@@ -164,6 +210,12 @@ int main()
             current_color_index = 0;
             player.set_position(-60, -50);
             treasure.set_position(25, 0);
+            fox.set_position(0, 40);
+            fox.set_visible(false);
+            car.set_position(0, -40);
+            car_vx = 1;
+            car_vy = 1;
+            car_direction_timer = 0;
             player.set_scale(1);  // Reset size
             bn::backdrop::set_color(level_colors[0]);  // Reset color
         }
@@ -188,16 +240,20 @@ int main()
             score++;
         }
 
-        // Fox collision
-        bn::rect fox_rect = bn::rect(fox.x().round_integer(),
-                                      fox.y().round_integer(),
-                                      FOX_SIZE.width(),
-                                      FOX_SIZE.height());
-        
-        if (player_rect.intersects(fox_rect))
+        // Fox collision (only if visible)
+        if (fox.visible())
         {
-            score = bn::max(0, score - 2);  // Lose 2 points
-            player.set_position(-60, -50);  // Reset player position
+            bn::rect fox_rect = bn::rect(fox.x().round_integer(),
+                                          fox.y().round_integer(),
+                                          FOX_SIZE.width(),
+                                          FOX_SIZE.height());
+            
+            if (player_rect.intersects(fox_rect))
+            {
+                score = bn::max(0, score - 2);  // Lose 2 points
+                player.set_position(-60, -50);  // Reset player position
+                fox.set_position(0, 40);  // Reset fox position
+            }
         }
 
         // Car collision
