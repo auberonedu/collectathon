@@ -60,14 +60,16 @@ int main()
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
     int score = 0;
+
+    // Color change variables
     int current_color_index = 0;
     bn::color level_colors[5] = {
-    bn::color(31, 20, 25),  // Pink (starting color)
-    bn::color(15, 25, 31),  // Blue
-    bn::color(20, 31, 15),  // Green
-    bn::color(31, 25, 10),  // Yellow
-    bn::color(25, 15, 31)   // Purple
-};
+        bn::color(31, 20, 25),  // Pink (starting color)
+        bn::color(15, 25, 31),  // Blue
+        bn::color(20, 31, 15),  // Green
+        bn::color(31, 25, 10),  // Yellow
+        bn::color(25, 15, 31)   // Purple
+    };
 
     int boosts_left = 3;
     int boost_timer = 0;
@@ -159,8 +161,11 @@ int main()
             score = 0;
             boosts_left = 3;
             boost_timer = 0;
+            current_color_index = 0;
             player.set_position(-60, -50);
             treasure.set_position(25, 0);
+            player.set_scale(1);  // Reset size
+            bn::backdrop::set_color(level_colors[0]);  // Reset color
         }
 
         // The bounding boxes of the player and treasure, snapped to integer pixels
@@ -181,6 +186,51 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+        }
+
+        // Fox collision
+        bn::rect fox_rect = bn::rect(fox.x().round_integer(),
+                                      fox.y().round_integer(),
+                                      FOX_SIZE.width(),
+                                      FOX_SIZE.height());
+        
+        if (player_rect.intersects(fox_rect))
+        {
+            score = bn::max(0, score - 2);  // Lose 2 points
+            player.set_position(-60, -50);  // Reset player position
+        }
+
+        // Car collision
+        bn::rect car_rect = bn::rect(car.x().round_integer(),
+                                      car.y().round_integer(),
+                                      CAR_SIZE.width(),
+                                      CAR_SIZE.height());
+        
+        if (player_rect.intersects(car_rect))
+        {
+            score = bn::max(0, score - 2);  // Lose 2 points
+            player.set_position(-60, -50);  // Reset player position
+        }
+
+        // Color change every 5 levels
+        if (score > 0 && score % 5 == 0)
+        {
+            int new_color_index = (score / 5) % 5;
+            if (new_color_index != current_color_index)
+            {
+                current_color_index = new_color_index;
+                bn::backdrop::set_color(level_colors[current_color_index]);
+            }
+        }
+
+        // Increase player size at level 10
+        if (score == 10)
+        {
+            player.set_scale(1.5);
+        }
+        else if (score == 20)
+        {
+            player.set_scale(2);
         }
 
         // Update score display
