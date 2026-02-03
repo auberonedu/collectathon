@@ -86,6 +86,8 @@ int main()
 
     bn::fixed current_speed = SPEED;
 
+    bn::fixed current_angle = 0;
+
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
@@ -123,7 +125,6 @@ int main()
         // Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
         bn::fixed dx = 0;
         bn::fixed dy = 0;
-        bn::fixed current_angle = 0;
 
         if (bn::keypad::left_held() && dx == 0 && dy == 0 && last_dir != Direction::RIGHT)
         {
