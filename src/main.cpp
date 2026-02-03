@@ -250,31 +250,31 @@ int main()
                 bn::fixed_point curr = head_positions[tail_index];
                 body_segments[i].set_position(curr);
 
-                if (tail_index > 0)
-                {
+                // if (tail_index > 0)
+                // {
 
-                    bn::fixed_point prev = head_positions[tail_index - 1];
+                // //bn::fixed_point prev = head_positions[tail_index - 1];
 
-                    bn::fixed path_dx = prev.x() - curr.x();
-                    bn::fixed path_dy = prev.y() - curr.y();
+                //     // bn::fixed path_dx = prev.x() - curr.x();
+                //     // bn::fixed path_dy = prev.y() - curr.y();
 
-                    // if (path_dx > 0)
-                    // {
-                    //     body_segments[i].set_rotation_angle_safe(270);
-                    // }
-                    // else if (path_dx < 0)
-                    // {
-                    //     body_segments[i].set_rotation_angle_safe(90);
-                    // }
-                    // else if (path_dy > 0)
-                    // {
-                    //     body_segments[i].set_rotation_angle_safe(180);
-                    // }
-                    // else if (path_dy < 0)
-                    // {
-                    //     body_segments[i].set_rotation_angle_safe(0);
-                    // }
-                }
+                //     // if (path_dx > 0)
+                //     // {
+                //     //     body_segments[i].set_rotation_angle_safe(270);
+                //     // }
+                //     // else if (path_dx < 0)
+                //     // {
+                //     //     body_segments[i].set_rotation_angle_safe(90);
+                //     // }
+                //     // else if (path_dy > 0)
+                //     // {
+                //     //     body_segments[i].set_rotation_angle_safe(180);
+                //     // }
+                //     // else if (path_dy < 0)
+                //     // {
+                //     //     body_segments[i].set_rotation_angle_safe(0);
+                //     // }
+                // }
             }
         }
 
