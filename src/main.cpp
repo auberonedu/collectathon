@@ -54,12 +54,6 @@ static constexpr int MAX_SEGMENTS = 64;
 // frames between each position so it looks smooth
 static constexpr int POSITION_STEP_FRAMES = 1;
 
-// setting up background grid for better movement mechanics
-static constexpr int CELL_SIZE = 8;
-// snakes position in the grid space not in pixels
-int snake_grid_x = 0;
-int snake_grid_y = 0;
-
 // Direction Enum
 enum class Direction
 {
@@ -94,15 +88,10 @@ int main()
 
     bn::fixed current_angle = 0;
 
-    // bn::fixed dx = 0;
-    // bn::fixed dy = 0;
+    bn::fixed dx = 0;
+    bn::fixed dy = 0;
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-
-    // initialize grid coordinates to match starting pixel position
-    snake_grid_x = PLAYER_START_X / CELL_SIZE;
-    snake_grid_y = PLAYER_START_Y / CELL_SIZE;
-
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
     // snakes body not including the head
@@ -118,7 +107,7 @@ int main()
 
     while (true)
     {
-        // // Move player with d-pad
+        // Move player with d-pad
         // if (bn::keypad::left_held())
         // {
         //     player.set_x(player.x() - current_speed);
@@ -137,65 +126,45 @@ int main()
         // }
 
         // Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
-
+        
         if (bn::keypad::left_pressed() && last_dir != Direction::RIGHT)
         {
+            dx = -current_speed;
+            dy = 0;
             last_dir = Direction::LEFT;
             current_angle = bn::fixed(90);
         }
         if (bn::keypad::right_pressed() && last_dir != Direction::LEFT)
         {
+            dx = current_speed;
+            dy = 0;
             last_dir = Direction::RIGHT;
             current_angle = bn::fixed(270);
         }
         if (bn::keypad::down_pressed() && last_dir != Direction::UP)
         {
+            dy = current_speed;
+            dx = 0;
             last_dir = Direction::DOWN;
             current_angle = bn::fixed(180);
         }
         if (bn::keypad::up_pressed() && last_dir != Direction::DOWN)
         {
+            dy = -current_speed;
+            dx = 0;
             last_dir = Direction::UP;
             current_angle = bn::fixed(0);
         }
 
-        // player.set_x(player.x() + dx);
-        // player.set_y(player.y() + dy);
-        // decide when grid movement happens: one per frame
-        bool step = true;
-        if (step)
-        {
-            switch (last_dir)
-            {
-            case Direction::LEFT:
-                snake_grid_x -= 1;
-                break;
-            case Direction::RIGHT:
-                snake_grid_x += 1;
-                break;
-            case Direction::UP:
-                snake_grid_y -= 1;
-                break;
-            case Direction::DOWN:
-                snake_grid_y += 1;
-                break;
-            default:
-                break;
-            }
-        }
-
-        // set sprite positions to the grid coordinates
-        bn::fixed pixel_x = snake_grid_x * CELL_SIZE;
-        bn::fixed pixel_y = snake_grid_y * CELL_SIZE;
-        player.set_x(pixel_x);
-        player.set_y(pixel_y);
+        player.set_x(player.x() + dx);
+        player.set_y(player.y() + dy);
 
         // Speed Boost
-        // if (bn::keypad::a_pressed() && (boost_remaining > 0) && (boost_duration_counter == 0))
-        // {
-        //     boost_remaining--;
-        //     boost_duration_counter = BOOST_DURATION_FRAMES;
-        // }
+        if (bn::keypad::a_pressed() && (boost_remaining > 0) && (boost_duration_counter == 0))
+        {
+            boost_remaining--;
+            boost_duration_counter = BOOST_DURATION_FRAMES;
+        }
 
         current_speed = SPEED;
         if (boost_duration_counter > 0)
@@ -206,53 +175,36 @@ int main()
         // Reset game if Start is pressed or self collision is true
         if (bn::keypad::start_pressed() || self_collision)
         {
-            // on reset re-initialize from our start position
-            snake_grid_x = PLAYER_START_X / CELL_SIZE;
-            snake_grid_y = PLAYER_START_Y / CELL_SIZE;
-            player.set_position(snake_grid_x * CELL_SIZE, snake_grid_y * CELL_SIZE);
+            player.set_x(PLAYER_START_X);
+            player.set_y(PLAYER_START_Y);
             score = 0;
             last_dir = Direction::NONE;
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
-            // boost_remaining = MAX_BOOSTS;
+            boost_remaining = MAX_BOOSTS;
             body_segments.clear();
             head_positions.clear();
             position_step_counter = 0;
             self_collision = false;
         }
 
-        // // Wrap player around screen edges
-        // if (player.x() < MIN_X)
-        // {
-        //     player.set_x(MAX_X);
-        // }
-        // else if (player.x() > MAX_X)
-        // {
-        //     player.set_x(MIN_X);
-        // }
+        // Wrap player around screen edges
+        if (player.x() < MIN_X)
+        {
+            player.set_x(MAX_X);
+        }
+        else if (player.x() > MAX_X)
+        {
+            player.set_x(MIN_X);
+        }
 
-        // if (player.y() < MIN_Y)
-        // {
-        //     player.set_y(MAX_Y);
-        // }
-        // else if (player.y() > MAX_Y)
-        // {
-        //     player.set_y(MIN_Y);
-        // }
-
-        int grid_min_x = MIN_X / CELL_SIZE;
-        int grid_max_x = (MAX_X - 1) / CELL_SIZE;
-        int grid_min_y = MIN_Y / CELL_SIZE;
-        int grid_max_y = (MAX_Y - 1) / CELL_SIZE;
-
-        if (snake_grid_x < grid_min_x)
-            snake_grid_x = grid_max_x;
-        else if (snake_grid_x > grid_max_x)
-            snake_grid_x = grid_min_x;
-        if (snake_grid_y < grid_min_y)
-            snake_grid_y = grid_max_y;
-        else if (snake_grid_y > grid_max_y)
-            snake_grid_y = grid_min_y;
-        player.set_position(snake_grid_x * CELL_SIZE, snake_grid_y * CELL_SIZE);
+        if (player.y() < MIN_Y)
+        {
+            player.set_y(MAX_Y);
+        }
+        else if (player.y() > MAX_Y)
+        {
+            player.set_y(MIN_Y);
+        }
 
         // https://gvaliente.github.io/butano/classbn_1_1fixed__point__t.html
         // Explained Butano docs found on github pages used for positioning
@@ -285,7 +237,7 @@ int main()
         // Update body segments to follow the head
         for (int i = 0; i < body_segments.size(); ++i)
         {
-            int tail_index = (i + 1) * 9;
+            int tail_index = (i + 1) * 8;
             if (tail_index < head_positions.size())
             {
                 body_segments[i].set_position(head_positions[tail_index]);
