@@ -11,6 +11,7 @@
 #include <bn_math.h>
 #include "bn_sprite_items_treasure_chest.h"
 #include "bn_sprite_items_hand_pointer.h"
+#include "bn_sprite_items_enemy.h"
 #include "common_fixed_8x16_font.h"
 #include <bn_backdrop.h>
 #include <bn_color.h>
@@ -31,6 +32,10 @@ static constexpr int BOOST_DURATION_FRAMES = 120;
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
+
+//Enemy constants 
+static constexpr int ENEMY_COUNT = 3;
+static constexpr bn::size ENEMY_SIZE = {8,8};
 
 // Starting position of player and treasure
 static constexpr bn::fixed PLAYER_X = -25;
@@ -71,6 +76,16 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::hand_pointer.create_sprite(PLAYER_X, PLAYER_Y);
     bn::sprite_ptr treasure = bn::sprite_items::treasure_chest.create_sprite(TREASURE_X, TREASURE_Y);
+
+    // Make enemies
+    bn::vector<bn::sprite_ptr, ENEMY_COUNT> enemies;
+
+    //Make loop that spawns enmies at random places
+    for (int i = 0; i < ENEMY_COUNT; i++){
+        int ex = rng.get_int(MIN_X, MAX_X);
+        int ey = rng.get_int(MIN_Y, MAX_Y);
+        enemies.push_back(bn::sprite_items::enemy.create_sprite(ex,ey));
+    }
 
     while (true)
     {
