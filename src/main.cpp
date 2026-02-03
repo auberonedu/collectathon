@@ -17,14 +17,9 @@
 #include "bn_sprite_items_treasure.h"
 #include "common_fixed_8x16_font.h"
 
-AUDIO_BACKEND : = jsfxr
-
 // change player color while boosted
 #include <bn_sprite_palette_ptr.h>
 #include <bn_sprite_palettes.h>
-
-                // Pixels
-                static constexpr bn::fixed SPEED = 2;
 
 // Width and height of the player, treasure, hazard, and dragon bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -73,6 +68,9 @@ static constexpr int TIMER_MAX_FRAMES = 900;
 // Dragon chase speed
 static constexpr bn::fixed DRAGON_SPEED = 1.2;
 
+// Base speed - changed from static constexpr to regular variable
+static bn::fixed SPEED = 2;
+
 int main()
 {
     bn::core::init();
@@ -95,7 +93,6 @@ int main()
     bn::sprite_ptr hazard = bn::sprite_items::dot.create_sprite(HAZARD_START_X, HAZARD_START_Y);
     bn::sprite_ptr dragon = bn::sprite_items::dragon.create_sprite(DRAGON_START_X, DRAGON_START_Y);
 
-    bool clash = false;
     bool paused = true;
 
     bn::vector<bn::sprite_ptr, 8> score_text_sprites;
@@ -103,7 +100,7 @@ int main()
     bn::vector<bn::sprite_ptr, 24> instruction_sprites;
 
     // bg color when paused
-    bn::backdrop::set_color(bn::color(31, 0, 0));
+    bn::bg_palettes::set_transparent_color(bn::color(31, 0, 0));
 
     text_generator.generate(50, -70, "Score:", score_text_sprites);
     text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
@@ -127,8 +124,6 @@ int main()
         // Pauses the game
         if (paused == true)
         {
-            SPEED = 0;
-            ENEMY_SPEED = 0;
             paused_sprites.clear();
             instruction_sprites.clear();
             text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
@@ -136,6 +131,8 @@ int main()
         }
         if (bn::keypad::start_pressed())
         {
+            paused = false;
+            
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             hazard.set_position(HAZARD_START_X, HAZARD_START_Y);
@@ -151,10 +148,14 @@ int main()
             player.set_visible(true);
             dragon.set_visible(true);
             bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
+            
+            // Clear pause screen
+            paused_sprites.clear();
+            instruction_sprites.clear();
         }
 
-        // Only update game if not game over
-        if (!game_over)
+        // Only update game if not paused and not game over
+        if (!paused && !game_over)
         {
             // Decrease timer
             if (timer_frames > 0)
