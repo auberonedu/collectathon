@@ -139,7 +139,7 @@ int main()
             boosts_left--;
         }
 
-        //When boost is active 
+        // When boost is active 
         if (boost_timer > 0) {
             if (bn::keypad::left_held() && bn::keypad::up_held()) {
                 player.set_x(player.x() - DIAG_SPEED);
@@ -220,12 +220,34 @@ int main()
 
 
             // Respawn enemies randomly whenever treasure is collected
-            for(bn::sprite_ptr& enemy : enemies)
+            for (bn::sprite_ptr& enemy : enemies)
             {
                 int ex = rng.get_int(MIN_X, MAX_X);
                 int ey = rng.get_int(MIN_Y, MAX_Y);
                 enemy.set_position(ex, ey);
             }
+
+        // prototype code :)
+        //     for(bn::sprite_ptr& enemy : enemies)
+        //     {
+        //         int ex = rng.get_int(MIN_X, MAX_X);
+        //         int ey = rng.get_int(MIN_Y, MAX_Y);
+        //         enemy.set_position(ex, ey);
+        //     }
+
+        // }
+
+        // bool enemy_hit = false;
+
+        // for(bn::sprite_ptr& enemy : enemies){
+        //     bn::rect enemy_rect = bn::rect(enemy.x().round_integer(),
+        //                                 enemy.y().round_integer(),
+        //                                 ENEMY_SIZE.width(),
+        //                                 ENEMY_SIZE.height());
+        //     if(player_rect.intersects(enemy_rect)) {
+        //         enemy_hit = true;
+        //         break;
+        //     }                           
         }
 
         // bomb intersections
@@ -264,16 +286,26 @@ int main()
             player.set_position(PLAYER_X, PLAYER_Y);
             treasure.set_position(TREASURE_X, TREASURE_Y);
 
-            for(bn::sprite_ptr& enemy : enemies) {
+            for (bn::sprite_ptr& enemy : enemies) {
                 int ex = rng.get_int(MIN_X, MAX_X);
                 int ey = rng.get_int(MIN_Y, MAX_Y);
                 enemy.set_position(ex, ey);
             }
 
+            // more prototype code :)
+            // Reset enemy positions 
+             
+            // for(bn::sprite_ptr& enemy : enemies)
+            // {
+            //     int ex = rng.get_int(MIN_X, MAX_X);
+            //     int ey = rng.get_int(MIN_Y, MAX_Y);
+            //     enemy.set_position(ex, ey);
+            // }
+
             // Reset score
             score = 0;
 
-            //Reset boost 
+            // Reset boost
             boosts_left = MAX_BOOSTS;
             boost_timer = 0;
         }
