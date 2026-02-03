@@ -204,7 +204,19 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+
+
+            // Respawn enemies randomly whenever treasure is collected
+            for(bn::sprite_ptr& enemy : enemies)
+            {
+                int ex = rng.get_int(MIN_X, MAX_X);
+                int ey = rng.get_int(MIN_Y, MAX_Y);
+                enemy.set_position(ex, ey);
+            }
+
         }
+
+        
 
         if(bn::keypad::start_pressed())
         {
