@@ -62,8 +62,6 @@ Make a speed boost
 
 - Fix a bug that allows players to boost before pressing start
 
-- Add a countdown timer
-
 - Add a boost counter
 
 - Make the enemy get faster over time (gets faster every 3 points)
