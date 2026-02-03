@@ -166,7 +166,7 @@ int main()
             current_speed = BOOSTED_SPEED;
             boost_duration_counter--;
         }
-
+        // Reset game if Start is pressed or self collision is true
         if (bn::keypad::start_pressed() || self_collision)
         {
             player.set_x(PLAYER_START_X);
