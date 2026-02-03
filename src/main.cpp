@@ -35,7 +35,7 @@ static constexpr bn::size TREASURE_SIZE = {8, 8};
 
 //Enemy constants 
 static constexpr int ENEMY_COUNT = 3;
-static constexpr bn::size ENEMY_SIZE = {8,8};
+static constexpr bn::size ENEMY_SIZE = {16, 16};
 
 // Starting position of player and treasure
 static constexpr bn::fixed PLAYER_X = -25;
@@ -79,6 +79,11 @@ int main()
 
     // Make enemies
     bn::vector<bn::sprite_ptr, ENEMY_COUNT> enemies;
+    bn::vector<bn::rect, ENEMY_COUNT> enemies_rect;
+
+    for (int i = 0; i < 3; i++) {
+        enemies_rect.push_back(bn::rect(0, 0, ENEMY_SIZE.width(), ENEMY_SIZE.height()));
+    }
 
     //Make loop that spawns enmies at random places
     for (int i = 0; i < ENEMY_COUNT; i++){
@@ -191,6 +196,14 @@ int main()
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
 
+        // Bounding boxes for enemies
+        for (int i = 0; i < 3; i++) {
+            enemies_rect[i] = bn::rect(enemies[i].x().round_integer(),
+                                    enemies[i].y().round_integer(),
+                                    ENEMY_SIZE.width(),
+                                    ENEMY_SIZE.height());
+        }
+
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
@@ -213,16 +226,49 @@ int main()
                 int ey = rng.get_int(MIN_Y, MAX_Y);
                 enemy.set_position(ex, ey);
             }
-
         }
 
-        
+        // bomb intersections
+        for (bn::rect enemy : enemies_rect) {
+            
+            // if the player touches the bomb
+            if (player_rect.intersects(enemy)) {
+                // Reset positions
+                player.set_position(PLAYER_X, PLAYER_Y);
+                treasure.set_position(TREASURE_X, TREASURE_Y);
 
-        if(bn::keypad::start_pressed())
-        {
+                for(bn::sprite_ptr& enemy : enemies) {
+                    int ex = rng.get_int(MIN_X, MAX_X);
+                    int ey = rng.get_int(MIN_Y, MAX_Y);
+                    enemy.set_position(ex, ey);
+                }
+
+            // Reset score
+            score = 0;
+
+            //Reset boost 
+            boosts_left = MAX_BOOSTS;
+            boost_timer = 0;
+            }
+
+            // if the treasure spawns inside of a bomb
+            if (treasure_rect.intersects(enemy)) {
+                int new_x = rng.get_int(MIN_X, MAX_X);
+                int new_y = rng.get_int(MIN_Y, MAX_Y);
+                treasure.set_position(new_x, new_y);
+            }
+        }
+
+        if(bn::keypad::start_pressed()) {
             // Reset positions
             player.set_position(PLAYER_X, PLAYER_Y);
             treasure.set_position(TREASURE_X, TREASURE_Y);
+
+            for(bn::sprite_ptr& enemy : enemies) {
+                int ex = rng.get_int(MIN_X, MAX_X);
+                int ey = rng.get_int(MIN_Y, MAX_Y);
+                enemy.set_position(ex, ey);
+            }
 
             // Reset score
             score = 0;
