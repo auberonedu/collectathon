@@ -1,6 +1,12 @@
-# collectathon
-A template to explore GBA games and collaboration with git/GitHub. Please see the instructions in [instructions.md](./instructions.md).
+# Chased
 
-Hosua loves chipotley.
+Description: A yellow cube does its best to collect treasure as its being chased from a demon. How far can you get?
 
-real.
+Instructions/Controls:
+- Reset Game: Start 
+- Move: D-Pad
+- Boost: A
+- 
+
+Play here: https://sodatax.github.io/collectathon/
+
