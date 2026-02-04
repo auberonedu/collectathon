@@ -57,10 +57,6 @@ int main()
 {
     int score = 0;
     int highScore = 0;
-    if (score > highScore)
-    {
-        highScore = score;
-    }
     // Pixels / Frame player moves at
     int SPEED = 1;
     int duration = 0;
@@ -177,6 +173,9 @@ int main()
             treasure.set_position(new_x, new_y);
 
             score++;
+            if (score > highScore) {
+                highScore = score;
+            }
         }
 
         for (int i = 0; i < wall.size(); i++)
