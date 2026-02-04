@@ -167,7 +167,7 @@ int main()
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
-            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            int new_y = rng.get_int(MIN_Y+20, MAX_Y);
             treasure.set_position(new_x, new_y);
 
             score++;
@@ -209,7 +209,7 @@ int main()
 
         if (duration > 0)
         {
-            SPEED = 3;
+            SPEED = 2;
             duration--;
         }
         else
