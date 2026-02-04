@@ -244,7 +244,7 @@ int main()
 
         if (player_rect.intersects(timeBoost_rect))
         {
-            time += 3;
+            seconds += 3;
             timeBoost.set_position(1000, 1000); // Spawns offscreen because i dont know how to delete
             isSpawnedTB = false;
         }
@@ -313,6 +313,7 @@ int main()
         // logs player position each update
         // BN_LOG("(", player.x(), ",", player.y(), ")");
         // BN_LOG(currentTime - seconds);
+        BN_LOG(start_time);
 
         bn::core::update();
     }
