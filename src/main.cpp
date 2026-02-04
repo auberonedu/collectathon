@@ -278,6 +278,11 @@ int main()
                 clash = false;
             }
 
+            if (score != 0 && (score % 3) == 0)
+            {
+                ENEMY_SPEED = ENEMY_SPEED + 0.1;
+            }
+
             score++;
         }
 
