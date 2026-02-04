@@ -19,8 +19,6 @@
 #include "bn_sprite_items_car.h"
 
 
-
-
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 3;
 
