@@ -59,9 +59,8 @@ static constexpr int MAX_SEGMENTS = 64;
 // frames between each position so it looks smooth
 static constexpr int POSITION_STEP_FRAMES = 1;
 
-//Segment spacing
+// Segment spacing
 static constexpr int SEGMENT_SPACING = 8;
-
 
 // Direction Enum
 enum class Direction
@@ -92,7 +91,7 @@ int main()
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
-    //Player Sprite and Treasure 
+    // Player Sprite and Treasure
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
     player.set_visible(false);
@@ -124,7 +123,7 @@ int main()
     int position_step_counter = 0;
 
     // Backdrop Color
-    bn::backdrop::set_color(bn::color(30, 0, 30));
+    bn::backdrop::set_color(bn::color(35, 23, 20));
 
     // While statment to show our start_screen before gameplay
     while (on_title)
@@ -150,7 +149,7 @@ int main()
     }
 
     while (!on_title)
-    { 
+    {
         // Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
         if (bn::keypad::left_pressed() && last_dir != Direction::RIGHT)
         {
@@ -197,7 +196,7 @@ int main()
             current_speed = BOOSTED_SPEED;
             boost_duration_counter--;
         }
-        
+
         // Reset game if the head collides with the body
         if (self_collision)
         {
@@ -269,7 +268,6 @@ int main()
             {
                 bn::fixed_point curr = head_positions[tail_index];
                 body_segments[i].set_position(curr);
-
             }
         }
 
