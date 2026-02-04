@@ -14,7 +14,7 @@
 
 #include "bn_sprite_items_oyster.h"
 #include "bn_sprite_items_crab.h"
-#include "bn_sprite_items_dot.h" //replace with octopus sprite later on !
+#include "bn_sprite_items_octopus.h"
 #include "bn_sound_items.h"
 #include "bn_sound.h"
 #include "common_fixed_8x16_font.h"
@@ -80,7 +80,7 @@ int main()
     bn::sprite_ptr treasure = bn::sprite_items::oyster.create_sprite(TREASURE_START_X,
                                                                   TREASURE_START_Y);
 
-    bn::sprite_ptr octopus = bn::sprite_items::dot.create_sprite(OCTOPUS_START_X,
+    bn::sprite_ptr octopus = bn::sprite_items::octopus.create_sprite(OCTOPUS_START_X,
                                                                  OCTOPUS_START_Y);
 
     
@@ -106,18 +106,52 @@ int main()
         {
             speed = SPEED;
         }
+        
+        // Setting class for tracking octopus movement
+        enum class octo_direction {
+            up, down, left, right
+        };
+
+        octo_direction last_direction = octo_direction::down;
+
         // Feature for octopus to follow treasure
-        if(octopus.y() > treasure.y()){
+        if(octopus.y() > treasure.y())
+        {
             octopus.set_y(octopus.y() - 0.2);
+            last_direction = octo_direction::up;
         }
-        else if(octopus.y() < treasure.y()){
+        else if(octopus.y() < treasure.y())
+        {
             octopus.set_y(octopus.y() + 0.2);
+            last_direction = octo_direction::down;
         }
-        if(octopus.x() > treasure.x()){
+        if(octopus.x() > treasure.x())
+        {
             octopus.set_x(octopus.x() - 0.2);
+            last_direction = octo_direction::left;
         }
-        else if(octopus.x() < treasure.x()){
+        else if(octopus.x() < treasure.x())
+        {
             octopus.set_x(octopus.x() + 0.2);
+            last_direction = octo_direction::right;
+        }
+
+        // Animate octopus based on movement
+        if(last_direction == octo_direction::up)
+        {
+            octopus.set_tiles(bn::sprite_items::octopus.tiles_item().create_tiles(2));
+        }
+        else if(last_direction == octo_direction::down)
+        {
+            octopus.set_tiles(bn::sprite_items::octopus.tiles_item().create_tiles(0));
+        }
+        else if(last_direction == octo_direction::left)
+        {
+            octopus.set_tiles(bn::sprite_items::octopus.tiles_item().create_tiles(4));
+        }
+        else if(last_direction == octo_direction::right)
+        {
+            octopus.set_tiles(bn::sprite_items::octopus.tiles_item().create_tiles(6));
         }
 
         // Move player with d-pad
