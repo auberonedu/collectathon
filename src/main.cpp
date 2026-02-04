@@ -18,14 +18,20 @@
 // Speed boost when A is pressed - Yousif
 static constexpr bn::fixed SPEED = 2;
 static constexpr bn::fixed SPEED_BOOST = 4;
+static constexpr bn:: fixed follower_speed = 1;
 int SPEED_BOOST_TIMER = 0;
 bn::fixed speed = SPEED;
 int boost_left = 3;
 
+//vector for follower sprites
+bn::vector<bn::sprite_ptr, 32>
+followers;
+int followers_spawned = 0;
+
 // Width and height of the the player and treasure bounding boxes, and now the follower.
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
-// static constexpr bn::size FOLLOWER_SIZE = {8, 8};
+static constexpr bn::size FOLLOWER_SIZE = {8, 8};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -50,8 +56,8 @@ static constexpr int BOOST_Y = -70;
 // Player location and follower - Anthony
 static constexpr bn::fixed PLAYER_Y = 40;
 static constexpr bn::fixed PLAYER_X = 40;
-// static constexpr bn::fixed FOLLOWER_Y = 60;
-// static constexpr bn::fixed FOLLOWER_X = 60;
+static constexpr bn::fixed FOLLOWER_Y = 60;
+static constexpr bn::fixed FOLLOWER_X = 60;
 
 int main()
 {
@@ -81,7 +87,8 @@ int main()
     bn::vector<bn::sprite_ptr, MAX_BOOST_CHARS> boost_sprites = {};
 
     int score = 0;
-    // bn::sprite_ptr follower = bn::sprite_items::dot.create_sprite(FOLLOWER_X, FOLLOWER_Y);
+     bn::sprite_ptr follower = bn::sprite_items::dot.create_sprite(FOLLOWER_X, FOLLOWER_Y);
+     followers.push_back(follower);
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
 
@@ -142,6 +149,10 @@ int main()
                 score_sprites.clear();
                 boost_left = 3;
             }
+            
+            
+
+
             // Move player with d-pad
             if (bn::keypad::left_held())
             {
@@ -160,7 +171,7 @@ int main()
                 player.set_y(player.y() + speed);
             }
 
-            // The bounding boxes of the player and treasure, snapped to integer pixels
+            // The bounding boxes of the player, follower, and treasure, snapped to integer pixels
             bn::rect player_rect = bn::rect(player.x().round_integer(),
                                             player.y().round_integer(),
                                             PLAYER_SIZE.width(),
@@ -169,6 +180,34 @@ int main()
                                               treasure.y().round_integer(),
                                               TREASURE_SIZE.width(),
                                               TREASURE_SIZE.height());
+            //loop through followers, used to assign speed and movement to all followers
+            for (bn::sprite_ptr& f : followers) {
+                bn::rect follower_rect(f.x().round_integer(),
+                                                  f.y().round_integer(),
+                                                  FOLLOWER_SIZE.width(),
+                                                  FOLLOWER_SIZE.height());    
+             
+                                               
+
+
+            //Move follower towards player                                  
+            if (!follower_rect.intersects(player_rect))
+            
+                if (follower_rect.left() < player_rect.left()){
+                    f.set_x(f.x() + follower_speed);
+                }
+                else if (follower_rect.left() > player_rect.left()){
+                    f.set_x(f.x() - follower_speed);
+                }
+                
+                if (follower_rect.top() < player_rect.top()) {
+                    f.set_y(f.y() + follower_speed);
+                }
+                else if (follower_rect.top() > player_rect.top()) {
+                    f.set_y(f.y() - follower_speed);
+
+                }
+            }
 
             // If the bounding boxes overlap, set the treasure to a new location an increase score
             if (player_rect.intersects(treasure_rect))
@@ -207,7 +246,15 @@ int main()
             text_generator.generate(SCORE_X, SCORE_Y,
                                     score_string,
                                     score_sprites);
+            
+            //increase followers by 1 every time you score
+            int target_followers = score / 10 + 1;
 
+            if (target_followers > followers_spawned + 1)
+            {
+                followers.push_back(bn::sprite_items::dot.create_sprite(FOLLOWER_X, FOLLOWER_Y));
+                followers_spawned++;
+            }
             // Update boost display
             boost_string.clear();
             boost_string = "BOOST LEFT: " + bn::to_string<MAX_BOOST_CHARS>(boost_left);
