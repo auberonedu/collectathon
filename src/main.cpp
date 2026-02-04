@@ -60,8 +60,8 @@ int main()
     int score = 0;
 
     // BOST VERIABLES
-    int boost_amt = 3;   // AMOUNT OF BOOSTS
-    int BOOST_SPD = 0;         // INCREASE IN SPEED
+    int boost_amt = 3;    // AMOUNT OF BOOSTS
+    int BOOST_SPD = 0;    // INCREASE IN SPEED
     int boost_length = 0; // TIME BEFORE BOOST ENDS
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
@@ -73,10 +73,10 @@ int main()
     // checks if player intersects with orb
     bool clash = false;
 
-    //checks if the game is paused
+    // checks if the game is paused
     bool paused = true;
 
-    //holds pause text in list
+    // holds pause text in list
     bn::vector<bn::sprite_ptr, 8> score_text_sprites;
     bn::vector<bn::sprite_ptr, 32> paused_sprites;
     bn::vector<bn::sprite_ptr, 24> instruction_sprites;
@@ -84,15 +84,16 @@ int main()
     // Backdrop color
     bn::backdrop::set_color(bn::color(31, 0, 0));
 
-    //adds text to list
+    // adds text to list
     text_generator.generate(50, -70, "Score:", score_text_sprites);
     text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
     text_generator.generate(-50, 60, "A - Boost (x3)", instruction_sprites);
 
     while (true)
     {
-        //Pauses the game
-        if(paused == true){
+        // Pauses the game
+        if (paused == true)
+        {
             SPEED = 0;
             ENEMY_SPEED = 0;
             paused_sprites.clear();
@@ -131,8 +132,8 @@ int main()
 
         // Touching border resets game
         if (player.x() == MIN_X || player.x() == MAX_X || player.y() == MIN_Y || player.y() == MAX_Y)
-        {   
-            //plays death sound
+        {
+            // plays death sound
             bn::sound_items::death.play();
 
             player.set_x(PLAYER_X);
@@ -148,13 +149,13 @@ int main()
             // Resets boosts
             boost_amt = 3;
 
-            //pauses the game
+            // pauses the game
             paused = true;
         }
         // Restart the game when pressed START
         if (bn::keypad::start_pressed())
-        {   
-            //plays select sound
+        {
+            // plays select sound
             bn::sound_items::select.play();
 
             score = 0;
@@ -172,15 +173,15 @@ int main()
             // resets boosts
             boost_amt = 3;
 
-            //resets player speed
+            // resets player speed
             SPEED = 2;
             ENEMY_SPEED = 0.75;
 
-            //clears start to play text
+            // clears start to play text
             paused_sprites.clear();
             instruction_sprites.clear();
 
-            //unpauses game
+            // unpauses game
             paused = false;
         }
 
@@ -188,12 +189,13 @@ int main()
         if (bn::keypad::a_pressed() && boost_amt > 0)
         {
             bn::sound_items::boost.play();
-            boost_amt--;      // HOW MANY BOOST FOR GAME
+            boost_amt--;       // HOW MANY BOOST FOR GAME
             boost_length = 30; // HOW MANY FRAMES BEFORE BOOST ENDS
             BOOST_SPD = 2;
         }
-        if (bn::keypad::a_pressed() && boost_amt <= 0){
-            bn::sound_items::boost_none.play(); //plays an "empty boost" sound
+        if (bn::keypad::a_pressed() && boost_amt <= 0)
+        {
+            bn::sound_items::boost_none.play(); // plays an "empty boost" sound
         }
         if (boost_length > 0)
         {
@@ -239,7 +241,7 @@ int main()
         // ENEMY
         if (enemy_rect.intersects(player_rect))
         {
-            //plays death sound if enemy intersects
+            // plays death sound if enemy intersects
             bn::sound_items::death.play();
 
             player.set_x(PLAYER_X);
@@ -255,7 +257,7 @@ int main()
             // Resets boosts
             boost_amt = 3;
 
-            //pauses the game
+            // pauses the game
             paused = true;
         }
 
@@ -268,12 +270,13 @@ int main()
             treasure.set_position(new_x, new_y);
 
             clash = true;
-            //plays a sound when overlaping with treasure
-            if(clash == true){
+            // plays a sound when overlaping with treasure
+            if (clash == true)
+            {
                 bn::sound_items::clash.play();
                 clash = false;
             }
-            
+
             score++;
         }
 
