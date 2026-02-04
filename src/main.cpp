@@ -51,8 +51,6 @@ static constexpr int boostSpeedMax = 10;
 static constexpr int useableBoostsMax = 3;
 int availableBoosts = useableBoostsMax;
 
-
-
 int main()
 {
     bn::core::init();
@@ -90,6 +88,9 @@ int main()
     // indicator variables
     int currentTime = 0;
     bn::vector<bn::sprite_ptr, 32> indicator_sprites = {};
+
+    // high score variables
+    int high_score = 0;
 
     while (true)
 
@@ -209,17 +210,18 @@ int main()
                 availableBoosts++;
             }
 
-            //point indicator
+            // point indicator
             currentTime = seconds;
             bn::string<32> indicator_string("+1");
             indicator_sprites.clear();
             text_generator.generate(player.x(), player.y(),
-                                              indicator_string,
-                                              indicator_sprites);
+                                    indicator_string,
+                                    indicator_sprites);
         }
 
-        //clare point indicator after 1 second
-        if(currentTime - seconds > 1){
+        // clare point indicator after 1 second
+        if (currentTime - seconds > 1)
+        {
             indicator_sprites.clear();
         }
 
@@ -254,8 +256,6 @@ int main()
         boost_string += bn::to_string<MAX_SCORE_CHARS>(availableBoosts);
         text_generator.generate(SCORE_X + 3, SCORE_Y + 12, boost_string, text_sprites);
 
-        
-
         // Update score display
         bn::string<32> score_string("Score:");
         score_string.append(bn::to_string<MAX_SCORE_CHARS>(score));
@@ -269,6 +269,14 @@ int main()
         {
             bn::backdrop::set_color(bn::color(0, 0, 0));
             indicator_sprites.clear();
+            time_sprites.clear();
+            score_sprites.clear();
+            text_sprites.clear();
+            // update high score
+            if (score > high_score)
+            {
+                high_score = score;
+            }
             if (bn::keypad::start_pressed())
             {
                 // Kjeans- creates rng values to spawn treasure on restart
@@ -285,11 +293,18 @@ int main()
 
                 bn::backdrop::set_color(bn::color(20, 20, 31));
             }
-            text_sprites.clear();
-            text_generator.generate(0, 0, "Score: " + bn::to_string<MAX_SCORE_CHARS>(score), text_sprites);
+            //display score
+            bn::string<32> end_score_string("Score: ");
+            end_score_string.append(bn::to_string<MAX_SCORE_CHARS>(score));
+            text_generator.generate(0, 0, end_score_string, text_sprites);
             text_generator.generate(0, -16, "Press START to play again", text_sprites);
+            //display high score
+            bn::string<32> end_highscore_string("High Score: ");
+            end_highscore_string.append(bn::to_string<MAX_SCORE_CHARS>(high_score));
+            text_generator.generate(0, 16, end_highscore_string, text_sprites);
+  
             bn::core::update();
-            text_sprites.clear();
+            
         }
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
@@ -297,7 +312,7 @@ int main()
 
         // logs player position each update
         // BN_LOG("(", player.x(), ",", player.y(), ")");
-        BN_LOG(currentTime - seconds);
+        // BN_LOG(currentTime - seconds);
 
         bn::core::update();
     }
