@@ -15,4 +15,5 @@ Have fun and don't let the ops catch you.
 Play here: https://sodatax.github.io/collectathon/
 
 Gallery:
+
 ![GIF showing the game play](chased.gif)
