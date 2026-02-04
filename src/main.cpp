@@ -20,6 +20,7 @@
 #include "bn_sprite_items_megadot.h"
 #include "bn_sprite_items_enemyhammer.h"
 #include "bn_sprite_items_bolt.h"
+#include "bn_sprite_items_coin.h"
 
 // Sound effect items
 #include "bn_sound_items.h"
@@ -382,7 +383,7 @@ int main()
 {
     bn::core::init();
 
-    bn::backdrop::set_color(bn::color(21, 15, 15));
+    bn::backdrop::set_color(bn::color(5, 23, 12));
     bn::random rng = bn::random();
 
     // Start text Sprites Vector
@@ -394,11 +395,11 @@ int main()
 
     bn::sprite_ptr player = bn::sprite_items::piggy.create_sprite(xCord, yCord);
     bn::sprite_ptr enemybox = bn::sprite_items::enemyhammer.create_sprite(-xCord, yCord);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
+    bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(0, 0);
     bn::sprite_ptr boltboost = bn::sprite_items::bolt.create_sprite(20, 40);
-    // bn::sprite_ptr minibolt1 = bn::sprite_items::bolt.create_sprite(100, 100);
-    // bn::sprite_ptr minibolt2 = bn::sprite_items::bolt.create_sprite(100, 100);
-    // bn::sprite_ptr minibolt3 = bn::sprite_items::bolt.create_sprite(100, 100);
+    bn::sprite_ptr minibolt1 = bn::sprite_items::bolt.create_sprite(100, 100);
+    bn::sprite_ptr minibolt2 = bn::sprite_items::bolt.create_sprite(100, 100);
+    bn::sprite_ptr minibolt3 = bn::sprite_items::bolt.create_sprite(100, 100);
     bn::vector<bn::sprite_ptr, 3> mini_bolts = {};
     for (int i = 0; i < 3; i++)
     {
