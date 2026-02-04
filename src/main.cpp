@@ -95,6 +95,7 @@ int main()
         if(paused == true){
             SPEED = 0;
             ENEMY_SPEED = 0;
+            boost_amt = 0;
             paused_sprites.clear();
             instruction_sprites.clear();
             text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
