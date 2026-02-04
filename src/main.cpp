@@ -11,8 +11,7 @@
 #include <bn_bg_palettes.h>
 #include <bn_sound_items.h>
 
-#include "bn_sprite_items_square.h"
-#include "bn_sprite_items_dot.h"
+#include "bn_sprite_items_player.h"
 #include "bn_sprite_items_dragon.h"
 #include "bn_sprite_items_treasure.h"
 #include "common_fixed_8x16_font.h"
@@ -88,21 +87,19 @@ int main()
     int score = 0;
     int timer_frames = TIMER_MAX_FRAMES;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
+    bn::sprite_ptr player = bn::sprite_items::player.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::treasure.create_sprite(TREASURE_START_X, TREASURE_START_Y);
-    bn::sprite_ptr hazard = bn::sprite_items::dot.create_sprite(HAZARD_START_X, HAZARD_START_Y);
+    bn::sprite_ptr hazard = bn::sprite_items::treasure.create_sprite(HAZARD_START_X, HAZARD_START_Y);
     bn::sprite_ptr dragon = bn::sprite_items::dragon.create_sprite(DRAGON_START_X, DRAGON_START_Y);
 
     bool paused = true;
 
-    bn::vector<bn::sprite_ptr, 8> score_text_sprites;
     bn::vector<bn::sprite_ptr, 32> paused_sprites;
     bn::vector<bn::sprite_ptr, 24> instruction_sprites;
 
     // bg color when paused
-    bn::bg_palettes::set_transparent_color(bn::color(31, 0, 0));
+    bn::bg_palettes::set_transparent_color(bn::color(7, 2, 8)); // dark purple
 
-    text_generator.generate(50, -70, "Score:", score_text_sprites);
     text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
     text_generator.generate(-50, 60, "A - Boost (x3)", instruction_sprites);
 
@@ -252,13 +249,11 @@ int main()
                 player.set_y(MIN_Y);
             }
 
-            // DRAGON CHASING LOGIC
             // Calculate direction from dragon to player
             bn::fixed dx = player.x() - dragon.x();
             bn::fixed dy = player.y() - dragon.y();
-
-            // Normalize and move dragon toward player
             bn::fixed distance = bn::sqrt(dx * dx + dy * dy);
+            
             if (distance > 0)
             {
                 dragon.set_x(dragon.x() + (dx / distance) * DRAGON_SPEED);
