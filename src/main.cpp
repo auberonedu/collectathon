@@ -20,6 +20,7 @@
 #include <bn_regular_bg_ptr.h>
 
 #include <bn_sprite_affine_mat_ptr.h>
+#include "bn_sound_items.h"
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 1;
@@ -41,7 +42,7 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
-//New Treasure bounds so it doesn't spawn half in half out
+// New Treasure bounds so it doesn't spawn half in half out
 static constexpr int TREASURE_HALF = 4;
 static constexpr int TREASURE_MIN_X = MIN_X + TREASURE_HALF;
 static constexpr int TREASURE_MAX_X = MAX_X - TREASURE_HALF;
@@ -207,6 +208,7 @@ int main()
         // Reset game if the head collides with the body
         if (self_collision)
         {
+            bn::sound_handle gameover_sound = bn::sound_items::gameover.play();
             on_title = true;
             break;
         }
@@ -304,6 +306,7 @@ int main()
             int new_x = rng.get_int(TREASURE_MIN_X, TREASURE_MAX_X);
             int new_y = rng.get_int(TREASURE_MIN_Y, TREASURE_MAX_Y);
             treasure.set_position(new_x, new_y);
+            bn::sound_handle bite_sound = bn::sound_items::bite.play();
 
             score++;
 
