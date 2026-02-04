@@ -14,6 +14,7 @@
 
 #include "bn_sprite_items_oyster.h"
 #include "bn_sprite_items_crab.h"
+#include "bn_sprite_items_dot.h" //replace with octopus sprite later on !
 #include "bn_sound_items.h"
 #include "bn_sound.h"
 #include "common_fixed_8x16_font.h"
@@ -54,6 +55,10 @@ static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
 
+// Octopus location
+static constexpr int OCTOPUS_START_X = 50;
+static constexpr int OCTOPUS_START_Y = -50;
+
 int main()
 {
     bn::core::init();
@@ -75,6 +80,10 @@ int main()
     bn::sprite_ptr treasure = bn::sprite_items::oyster.create_sprite(TREASURE_START_X,
                                                                   TREASURE_START_Y);
 
+    bn::sprite_ptr octopus = bn::sprite_items::dot.create_sprite(OCTOPUS_START_X,
+                                                                 OCTOPUS_START_Y);
+
+    
     while (true)
     {
         bn::fixed speed = SPEED;
@@ -96,6 +105,19 @@ int main()
         else
         {
             speed = SPEED;
+        }
+        // Feature for octopus to follow treasure
+        if(octopus.y() > treasure.y()){
+            octopus.set_y(octopus.y() - 0.2);
+        }
+        else if(octopus.y() < treasure.y()){
+            octopus.set_y(octopus.y() + 0.2);
+        }
+        if(octopus.x() > treasure.x()){
+            octopus.set_x(octopus.x() - 0.2);
+        }
+        else if(octopus.x() < treasure.x()){
+            octopus.set_x(octopus.x() + 0.2);
         }
 
         // Move player with d-pad
@@ -144,6 +166,10 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
+        bn::rect octopus_rect = bn::rect(octopus.x().round_integer(),
+                                          octopus.y().round_integer(),
+                                          TREASURE_SIZE.width(),
+                                          TREASURE_SIZE.height());
 
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
@@ -154,9 +180,23 @@ int main()
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
             treasure.set_position(new_x, new_y);
-
+            octopus.set_position(new_x + 50, new_y - 50); //move octopus relative to treasure
             score++;
         }
+        if (octopus_rect.intersects(treasure_rect))
+        {
+            bn::sound_items::hit.play(); // play hit sound
+
+            // Reset treasure position and decrease score
+            int new_x = rng.get_int(MIN_X, MAX_X);
+            int new_y = rng.get_int(MIN_Y, MAX_Y);  
+            treasure.set_position(new_x, new_y);
+            octopus.set_position(new_x + 50, new_y - 50); //move octopus relative to treasure
+            if(score > 0)
+            {
+                score--;
+            }
+        }   
 
         // On start press, the game resets and puts everything back to initial state
         if (bn::keypad::start_pressed())
@@ -165,6 +205,7 @@ int main()
             BOOSTS_LEFT = 3;
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
+            octopus.set_position(OCTOPUS_START_X, OCTOPUS_START_Y);
         }
 
         // Implement loop behavior on screen
