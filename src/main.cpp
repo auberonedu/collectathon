@@ -78,6 +78,7 @@ int main()
 
     // holds pause text in list
     bn::vector<bn::sprite_ptr, 8> score_text_sprites;
+    bn::vector<bn::sprite_ptr, 12> boost_text_sprites;
     bn::vector<bn::sprite_ptr, 32> paused_sprites;
     bn::vector<bn::sprite_ptr, 24> instruction_sprites;
 
@@ -86,6 +87,7 @@ int main()
 
     // adds text to list
     text_generator.generate(50, -70, "Score:", score_text_sprites);
+    text_generator.generate(50, -60, "Boost:", boost_text_sprites);
     text_generator.generate(-75, 40, "Press START to play!", paused_sprites);
     text_generator.generate(-50, 60, "A - Boost (x3)", instruction_sprites);
 
