@@ -123,7 +123,7 @@ int main()
     int position_step_counter = 0;
 
     // Backdrop Color
-    bn::backdrop::set_color(bn::color(35, 23, 20));
+    bn::backdrop::set_color(bn::color(25, 23, 20));
 
     // While statment to show our start_screen before gameplay
     while (on_title)
