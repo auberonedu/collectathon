@@ -107,6 +107,7 @@ int main()
 
     int score = 0;
 
+    bool gameover_played = false;
     // int boost_remaining = MAX_BOOSTS;
 
     // int boost_duration_counter = 0;
@@ -150,6 +151,7 @@ int main()
             head_positions.clear();
             position_step_counter = 0;
             self_collision = false;
+            gameover_played = false;
             player.set_visible(true);
             treasure.set_visible(true);
         }
@@ -205,13 +207,6 @@ int main()
         //     boost_duration_counter--;
         // }
 
-        // Reset game if the head collides with the body
-        if (self_collision)
-        {
-            bn::sound_handle gameover_sound = bn::sound_items::gameover.play();
-            on_title = true;
-            break;
-        }
 
         // Wrap player around screen edges
         if (player.x() < MIN_X)
@@ -299,6 +294,22 @@ int main()
                 break;
             }
         }
+
+        // Reset game if the head collides with the body
+        if (self_collision && !gameover_played)
+        {
+            bn::sound_items::gameover.play();
+            gameover_played = true;
+        } else if (self_collision && gameover_played) {
+            static int gameover_timer = 0;
+            gameover_timer++;
+            if (gameover_timer > 15) {
+                gameover_timer = 0;
+                on_title = true;
+                break;
+            }
+        }
+
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
@@ -333,5 +344,6 @@ int main()
         rng.update();
 
         bn::core::update();
+
     }
 }
