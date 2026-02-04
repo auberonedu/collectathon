@@ -66,10 +66,6 @@ int main()
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
     
-    bn::vector<bn::sprite_ptr, 12> wave_sprites = {};
-    int wave_timer = 180;
-    int wave = 1;
-    
     //create wall vector
     bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
     bn::vector<bn::rect, bn::display::width()/16> wall_rect = {};
@@ -115,7 +111,7 @@ int main()
         {   // if the wall at is the top
             for(int i = 0; i< bn::display::width(); i+= 16)
             {
-                if(rng.get_bool()){
+                if(score> 0 &&rng.get_int(0,10) < score/5 +1){
 
                     wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y+1));
                 }
@@ -254,17 +250,6 @@ int main()
                                 boost_sprites);
 
                                 
-        if (wave_timer > 0)
-        {
-            wave_sprites.clear();
-            bn::string<12> wave_string = "WAVE: " + bn::to_string<12>(wave);
-            text_generator.generate(-20, 0, wave_string, wave_sprites);
-            wave_timer--;
-        }
-        else
-        {
-            wave_sprites.clear();
-        }
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
         bn::core::update();
