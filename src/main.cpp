@@ -49,9 +49,18 @@ static constexpr int PLAYER_START_Y = 50;
 static constexpr int TREASURE_START_X = 0;
 static constexpr int TREASURE_START_Y = 0;
 
+// High Score
+static constexpr int HIGH_X = 90;
+static constexpr int HIGH_Y = -60;
+
 int main()
 {
     int score = 0;
+    int highScore = 0;
+    if (score > highScore)
+    {
+        highScore = score;
+    }
     // Pixels / Frame player moves at
     int SPEED = 1;
     int duration = 0;
@@ -60,25 +69,24 @@ int main()
     bn::core::init();
     // #1
     bn::backdrop::set_color(bn::color(0, 0, 31));
-    
+
     bn::random rng = bn::random();
-    
-    
+
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(TREASURE_START_X, TREASURE_START_Y);
-    
-    //create wall vector
-    bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
-    bn::vector<bn::rect, bn::display::width()/16> wall_rect = {};
+
+    // create wall vector
+    bn::vector<bn::sprite_ptr, bn::display::width() / 16> wall = {};
+    bn::vector<bn::rect, bn::display::width() / 16> wall_rect = {};
 
     int wall_Y = MIN_Y;
 
     while (true)
-    {   
-        
+    {
+
         // Game Reset
         if (bn::keypad::start_pressed())
-        {   
+        {
             boostCount = 3;
             duration = 0;
             score = 0;
@@ -88,7 +96,7 @@ int main()
             treasure.set_y(TREASURE_START_Y);
             wall_Y = MAX_Y;
         }
-        
+
         // Move player with d-pad
         if (bn::keypad::left_held())
         {
@@ -108,39 +116,40 @@ int main()
         }
 
         // wall functionallity
-        if(wall_Y == MIN_Y)
-        {   // if the wall at is the top
-            for(int i = 0; i< bn::display::width(); i+= 16)
+        if (wall_Y == MIN_Y)
+        { // if the wall at is the top
+            for (int i = 0; i < bn::display::width(); i += 16)
             {
-                if(score> 0 &&rng.get_int(0,10) < score/5 +1){
+                if (score > 0 && rng.get_int(0, 10) < score / 5 + 1)
+                {
 
-                    wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X+i+8,MIN_Y+1));
+                    wall.push_back(bn::sprite_items::brick.create_sprite(MIN_X + i + 8, MIN_Y + 1));
                 }
             }
-            for(int i=0;i<wall.size();i++){
-                wall_rect.push_back( bn::rect(  wall[i].x().round_integer(),
-                                                wall[i].y().round_integer(),
-                                                BRICK_SIZE.width(),
-                                                BRICK_SIZE.height() ));
+            for (int i = 0; i < wall.size(); i++)
+            {
+                wall_rect.push_back(bn::rect(wall[i].x().round_integer(),
+                                             wall[i].y().round_integer(),
+                                             BRICK_SIZE.width(),
+                                             BRICK_SIZE.height()));
             }
             wall_Y++;
-
-        } 
-        else if(wall_Y == MAX_Y)
+        }
+        else if (wall_Y == MAX_Y)
         { // if the wall is at the bottom
             wall.clear();
             wall_rect.clear();
             wall_Y = MIN_Y;
-        } 
-        else 
-        {   //Move the wall
-            for(int i = 0; i< wall.size(); i++)
-            {
-                wall[i].set_y(wall[i].y() + 1); 
-            }
-            wall_Y ++;
         }
-        
+        else
+        { // Move the wall
+            for (int i = 0; i < wall.size(); i++)
+            {
+                wall[i].set_y(wall[i].y() + 1);
+            }
+            wall_Y++;
+        }
+
         // The bounding boxes of the player and treasure, snapped to integer pixels
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
@@ -150,8 +159,8 @@ int main()
                                           treasure.y().round_integer(),
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
-        
-        for(int i = 0; i< wall.size(); i++)
+
+        for (int i = 0; i < wall.size(); i++)
         {
             wall_rect[i] = bn::rect(wall[i].x().round_integer(),
                                     wall[i].y().round_integer(),
@@ -164,15 +173,15 @@ int main()
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
-            int new_y = rng.get_int(MIN_Y+20, MAX_Y);
+            int new_y = rng.get_int(MIN_Y + 20, MAX_Y);
             treasure.set_position(new_x, new_y);
 
             score++;
         }
 
-        for(int i = 0; i< wall.size(); i++)
+        for (int i = 0; i < wall.size(); i++)
         {
-            if(player_rect.intersects(wall_rect[i]))
+            if (player_rect.intersects(wall_rect[i]))
             {
                 boostCount = 3;
                 duration = 0;
@@ -183,9 +192,7 @@ int main()
                 treasure.set_y(TREASURE_START_Y);
                 wall_Y = MAX_Y;
             }
-
         }
-
 
         if (player.x() > MAX_X)
         {
@@ -220,21 +227,20 @@ int main()
             boostCount--;
         }
 
-        
         // Will hold the sprites for the score
         bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
         bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
-    
+
         bn::vector<bn::sprite_ptr, 5> score_label_sprites;
         text_generator.generate(SCORE_X - 50, SCORE_Y, "SCORE:", score_label_sprites);
-    
+
         // This will hold the sprites for the speed boost count
         bn::vector<bn::sprite_ptr, 11> boost_label_sprites = {};
         bn::vector<bn::sprite_ptr, SPEED_BOOST_COUNT_CHARS> boost_sprites = {};
-    
+
         text_generator.generate(SPEED_BOOST_COUNT_X - 90, SPEED_BOOST_COUNT_Y,
                                 "BOOST LEFT:", boost_label_sprites);
-        
+
         // Update score display
         bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
         score_sprites.clear();
@@ -249,8 +255,14 @@ int main()
         text_generator.generate(SPEED_BOOST_COUNT_X, SPEED_BOOST_COUNT_Y,
                                 boost_string,
                                 boost_sprites);
+        bn::vector<bn::sprite_ptr, 5> high_label_sprites;
+        text_generator.generate(HIGH_X - 50, HIGH_Y, "HIGH:", high_label_sprites);
 
-                                
+        bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> high_sprites;
+        bn::string<MAX_SCORE_CHARS> high_string = bn::to_string<MAX_SCORE_CHARS>(highScore);
+        high_sprites.clear();
+        text_generator.generate(HIGH_X, HIGH_Y, high_string, high_sprites);
+
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
         bn::core::update();
