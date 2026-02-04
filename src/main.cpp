@@ -207,16 +207,6 @@ int main()
         // Reset game if the head collides with the body
         if (self_collision)
         {
-            // player.set_x(PLAYER_START_X);
-            // player.set_y(PLAYER_START_Y);
-            // score = 0;
-            // last_dir = Direction::NONE;
-            // treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
-            // boost_remaining = MAX_BOOSTS;
-            // body_segments.clear();
-            // head_positions.clear();
-            // position_step_counter = 0;
-            // self_collision = false;
             on_title = true;
             break;
         }
