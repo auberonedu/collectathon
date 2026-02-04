@@ -41,6 +41,13 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
+//New Treasure bounds so it doesn't spawn half in half out
+static constexpr int TREASURE_HALF = 4;
+static constexpr int TREASURE_MIN_X = MIN_X + TREASURE_HALF;
+static constexpr int TREASURE_MAX_X = MAX_X - TREASURE_HALF;
+static constexpr int TREASURE_MIN_Y = MIN_Y + TREASURE_HALF;
+static constexpr int TREASURE_MAX_Y = MAX_Y - TREASURE_HALF;
+
 // new starting location for treasure and player
 static constexpr int PLAYER_START_X = -50;
 static constexpr int PLAYER_START_Y = 50;
@@ -302,8 +309,8 @@ int main()
         if (player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
-            int new_x = rng.get_int(MIN_X, MAX_X);
-            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            int new_x = rng.get_int(TREASURE_MIN_X, TREASURE_MAX_X);
+            int new_y = rng.get_int(TREASURE_MIN_Y, TREASURE_MAX_Y);
             treasure.set_position(new_x, new_y);
 
             score++;
