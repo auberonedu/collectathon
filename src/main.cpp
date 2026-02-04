@@ -15,6 +15,7 @@
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_brick.h"
+#include "bn_sprite_items_coin.h"
 
 // imports/includes  all the core functions of gameboy which includes, keypad, core, sprite
 // as well as the random
@@ -64,7 +65,7 @@ int main()
     
     
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(TREASURE_START_X, TREASURE_START_Y);
     
     //create wall vector
     bn::vector<bn::sprite_ptr, bn::display::width()/16> wall = {};
