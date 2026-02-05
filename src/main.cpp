@@ -18,6 +18,7 @@
 
 #include <bn_sprite_palette_ptr.h>
 #include <bn_sprite_palettes.h>
+#include <bn_sprite_items_grass1.h>
 
 // combo settings for combo and text display
 static constexpr int COMBO_TIME_FRAMES = 180; //3 sec
@@ -94,6 +95,8 @@ int main()
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> timer_sprites;
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
+    // background decorations
+    bn::vector<bn::sprite_ptr, NUM_DECORATIONS> decorations; 
     int score = 0;
     int timer_frames = TIMER_MAX_FRAMES;
 
@@ -101,7 +104,17 @@ int main()
     bn::sprite_ptr treasure = bn::sprite_items::treasure.create_sprite(TREASURE_START_X, TREASURE_START_Y);
     bn::sprite_ptr hazard = bn::sprite_items::treasure.create_sprite(HAZARD_START_X, HAZARD_START_Y);
     bn::sprite_ptr dragon = bn::sprite_items::dragon.create_sprite(DRAGON_START_X, DRAGON_START_Y);
-
+    for (int i = 0; i < NUM_DECORATIONS; ++i)
+    {
+        int decor_x = rng.get_int(MIN_X + 10, MAX_X - 10); // offset by 10 to avoid edge collisions
+        int decor_y = rng.get_int(MIN_Y + 10, MAX_Y - 10);
+        
+        // use grass sprite as decoration
+        bn::sprite_ptr decor = bn::sprite_items::grass1.create_sprite(decor_x, decor_y);
+        decor.set_scale(0.5); // scale down decoration
+        decorations.push_back(bn::move(decor));// add to decorations vector
+    }
+    
     bool paused = true;
 
     bn::vector<bn::sprite_ptr, 32> paused_sprites;
@@ -131,6 +144,8 @@ int main()
     int combo_count = 0;
     int combo_display_frames = 0; // frames to display combo text
     bn::vector<bn::sprite_ptr, 16> combo_sprites;
+
+    
     while (true)
     {
         // Pauses the game

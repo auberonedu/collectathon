@@ -62,5 +62,6 @@ I added sound effects when dying/getting the treasure.
 I added another sprite called 'dragon' that chases the player.
 I changed the graphics of both the treasure and player to look like a chest and a knight. 
 EDIT: 2/4/2026 - Kate
-I add a combo effect where it show combo, x2,x3,etc
-planning to add some background decor, alr set up, still testing the code
+I added a combo effect where it show combo, x2,x3,etc
+planning to add some background decor, alr set up, still testing the code.
+I added some grass using libresprite for background.
