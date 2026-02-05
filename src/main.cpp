@@ -16,10 +16,18 @@
 #include "bn_sprite_items_treasure.h"
 #include "common_fixed_8x16_font.h"
 
-// change player color while boosted
 #include <bn_sprite_palette_ptr.h>
 #include <bn_sprite_palettes.h>
 
+// combo settings for combo and text display
+static constexpr int COMBO_TIME_FRAMES = 180; //3 sec
+static constexpr int COMBO_BONUS = 2;          // score multiplier
+static constexpr int COMBO_X = 0;
+static constexpr int COMBO_Y = -50;
+
+// background decor
+static constexpr int NUM_DECORATIONS = 8;
+// change player color while boosted
 // Width and height of the player, treasure, hazard, and dragon bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {16, 16};
@@ -79,6 +87,8 @@ int main()
 
     bn::random rng;
 
+
+
     // Will hold the sprites for the score and timer
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites;
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> timer_sprites;
@@ -116,6 +126,11 @@ int main()
     // game over flag
     bool game_over = false;
 
+    // combo system
+    int frames_since_last_treasure = COMBO_TIME_FRAMES + 1 ;
+    int combo_count = 0;
+    int combo_display_frames = 0; // frames to display combo text
+    bn::vector<bn::sprite_ptr, 16> combo_sprites;
     while (true)
     {
         // Pauses the game
@@ -142,6 +157,11 @@ int main()
             slow_frames_left = 0;
             game_over = false;
 
+            //combo
+            frames_since_last_treasure = COMBO_TIME_FRAMES + 1 ;
+            combo_count = 0;
+            combo_display_frames = 0;
+
             player.set_visible(true);
             dragon.set_visible(true);
             bn::sprite_palettes::set_fade(bn::color(31, 31, 31), 0);
@@ -165,6 +185,11 @@ int main()
                 game_over = true;
                 bn::sound_items::death.play();                           // Play death sound
                 bn::sprite_palettes::set_fade(bn::color(31, 0, 0), 0.7); // Red fade
+                ++frames_since_last_treasure; // to stop combo counting
+                if (combo_display_frames > 0)
+                {
+                    --combo_display_frames;
+                }
             }
 
             // boost when press A
@@ -290,7 +315,20 @@ int main()
                 int new_y = rng.get_int(MIN_Y, MAX_Y);
                 treasure.set_position(new_x, new_y);
 
-                ++score;
+                // combo system
+                int points_earned = 1; // base point
+                if (frames_since_last_treasure < COMBO_TIME_FRAMES) 
+                {
+                    ++combo_count;
+                    points_earned = COMBO_BONUS;
+                    combo_display_frames = 120; // display COMBO text for 2 seconds
+                }
+                else
+                {
+                    combo_count = 0; // reset combo
+                }
+                score += points_earned;
+                frames_since_last_treasure = 0; // reset timer
             }
 
             if (player_rect.intersects(hazard_rect))
@@ -327,6 +365,20 @@ int main()
         bn::string<2> boost_string = bn::to_string<1>(boost_left);
         bn::vector<bn::sprite_ptr, 2> boost_sprites;
         text_generator.generate(-80, -70, boost_string, boost_sprites);
+
+        if (combo_display_frames > 0)
+        {
+            // Display combo text
+            combo_sprites.clear(); // clear previous combo sprites
+            bn::string<16> combo_string = "COMBO x"; // COMBO text
+            combo_string.append(bn::to_string<2>(combo_count + 1)); // +1 to show actual combo multiplier
+
+            text_generator.generate(COMBO_X, COMBO_Y, combo_string, combo_sprites); // generate combo text sprites
+        }
+        else
+        {
+            combo_sprites.clear();
+        }   
 
         // Update RNG seed so no more than one game is the same
         rng.update();
