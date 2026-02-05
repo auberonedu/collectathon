@@ -1,4 +1,3 @@
-# collectathon
 # Collectathon (GameBoy Advance)
 
 A simple game built using **Butano**, a C++ high-level GBA engine.
