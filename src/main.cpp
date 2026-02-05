@@ -16,6 +16,7 @@
 #include "common_fixed_8x16_font.h"
 #include "bn_sprite_items_brick.h"
 #include "bn_sprite_items_coin.h"
+#include "bn_sprite_items_rat.h"
 
 // imports/includes  all the core functions of gameboy which includes, keypad, core, sprite
 // as well as the random
@@ -68,7 +69,7 @@ int main()
 
     bn::random rng = bn::random();
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
+    bn::sprite_ptr player = bn::sprite_items::rat.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::coin.create_sprite(TREASURE_START_X, TREASURE_START_Y);
 
     // create wall vector
@@ -97,18 +98,50 @@ int main()
         if (bn::keypad::left_held())
         {
             player.set_x(player.x() - SPEED);
+            player.set_rotation_angle_safe(90+45);
         }
         if (bn::keypad::right_held())
         {
             player.set_x(player.x() + SPEED);
+            player.set_rotation_angle_safe(-45);
+
         }
         if (bn::keypad::up_held())
         {
             player.set_y(player.y() - SPEED);
+
+            //rotation adjustment
+            if(bn::keypad::right_held())
+            {
+                player.set_rotation_angle_safe(0);
+            } 
+            else if(bn::keypad::left_held())
+            {
+                player.set_rotation_angle_safe(90);
+            } 
+            else 
+            {
+                player.set_rotation_angle_safe(45);
+            }
+
         }
         if (bn::keypad::down_held())
         {
             player.set_y(player.y() + SPEED);
+
+            if(bn::keypad::right_held())
+            {
+                player.set_rotation_angle_safe(-90);
+            }
+            else if(bn::keypad::left_held())
+            {
+                player.set_rotation_angle_safe(180);
+            }
+            else
+            {
+                player.set_rotation_angle_safe(-45-90);
+            }
+
         }
 
         // wall functionallity
