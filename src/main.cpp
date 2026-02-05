@@ -67,7 +67,7 @@ static constexpr int TIMER_Y = -70;
 // Boost settings
 static constexpr int BOOST_MAX_USES = 3;
 static constexpr int BOOST_DURATION_FRAMES = 60;
-static constexpr bn::fixed BOOST_SPEED = 8;
+static constexpr bn::fixed BOOST_SPEED = 4;
 
 // Slow speed
 static constexpr int SLOW_DURATION_FRAMES = 90;
@@ -105,12 +105,18 @@ int main()
     bn::fixed treasure_bob_offset = 0; // offset for bobbing animation
     bool treasure_bob_up = true;
     int treasure_base_y = TREASURE_START_Y; // store base Y position of treasure
+    // bobbing animation hazard
+    bn::fixed hazard_bob_offset = 0; // offset for bobbing animation
+    bool hazard_bob_up = true;
+    int hazard_base_y = HAZARD_START_Y; // store base Y position of hazard
+
     int score = 0;
     int timer_frames = TIMER_MAX_FRAMES;
 
     bn::sprite_ptr player = bn::sprite_items::player.create_sprite(PLAYER_START_X, PLAYER_START_Y);
     bn::sprite_ptr treasure = bn::sprite_items::treasure.create_sprite(TREASURE_START_X, TREASURE_START_Y);
     bn::sprite_ptr hazard = bn::sprite_items::treasure.create_sprite(HAZARD_START_X, HAZARD_START_Y);
+    hazard_base_y = HAZARD_START_Y;
     bn::sprite_ptr dragon = bn::sprite_items::dragon.create_sprite(DRAGON_START_X, DRAGON_START_Y);
     for (int i = 0; i < NUM_DECORATIONS; ++i)
     {
@@ -171,6 +177,9 @@ int main()
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
             treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
             hazard.set_position(HAZARD_START_X, HAZARD_START_Y);
+            hazard_base_y = HAZARD_START_Y;
+            hazard_bob_offset = 0;
+            hazard_bob_up = true;
             dragon.set_position(DRAGON_START_X, DRAGON_START_Y);
 
             score = 0;
@@ -296,6 +305,7 @@ int main()
             {
                 player.set_y(MIN_Y);
             }
+            // TREASURE BOBBING ANIMATION
             if (treasure_bob_up)
             {
                 treasure_bob_offset += BOB_SPEED;
@@ -312,8 +322,28 @@ int main()
                     treasure_bob_up = true;
                 }
             }
+            // Update treasure position with bobbing offset
             treasure.set_y(treasure_base_y + treasure_bob_offset);
             ++frames_since_last_treasure;
+            // HAZARD BOBBING ANIMATION
+            if (hazard_bob_up)
+            {
+                hazard_bob_offset += BOB_SPEED;
+                if (hazard_bob_offset >= BOB_AMOUNT)
+                {
+                    hazard_bob_up = false;
+                }
+            }
+            else
+            {
+                hazard_bob_offset -= BOB_SPEED;
+                if (hazard_bob_offset <= -BOB_AMOUNT)
+                {
+                    hazard_bob_up = true;
+                }
+            }
+            // Update hazard position with bobbing offset
+            hazard.set_y(hazard_base_y + hazard_bob_offset);
             // DRAGON CHASING LOGIC
             // Calculate direction from dragon to player
             bn::fixed dx = player.x() - dragon.x();
@@ -380,6 +410,7 @@ int main()
                 int new_x = rng.get_int(MIN_X, MAX_X);
                 int new_y = rng.get_int(MIN_Y, MAX_Y);
                 hazard.set_position(new_x, new_y);
+                hazard_base_y = new_y; // update base Y for bobbing
             }
 
             // Dragon catches player - GAME OVER!
