@@ -24,10 +24,12 @@ Programming and Game Planning by https://github.com/LadyGalatear & https://githu
 ## FEATURES
 
 Fetch Thy Oyster is a simple, bit-styled game based on the GameBoy Advance. Features include:
-* Artistic crab sprites & oyster.
+* Artistic crab sprites & oyster, with an enemy octopus sprite.
 * Manuever of a crab character, only objective is to "fetch" the oyster entity to feed the crab, and get points!
+* !! BEWARE !! An octopus is on a mission to STEAL the oyster from you! Better watch out, it considers you dinner as well!
 * Sound effects for immersion.
 * Speed boost for when you're in a rush.
+
 
 
 ![Game Preview](game-preview.gif)
