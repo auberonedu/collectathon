@@ -64,8 +64,8 @@ int main()
     int boostCount = 3;
 
     bn::core::init();
-    // #1
-    bn::backdrop::set_color(bn::color(0, 0, 31));
+    // Background Color
+    bn::backdrop::set_color(bn::color(0, 20, 5));
 
     bn::random rng = bn::random();
 
