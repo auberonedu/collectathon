@@ -51,7 +51,7 @@ static constexpr int TREASURE_START_Y = 0;
 
 // High Score
 static constexpr int HIGH_X = 90;
-static constexpr int HIGH_Y = -60;
+static constexpr int HIGH_Y = 70;
 
 int main()
 {
@@ -169,7 +169,7 @@ int main()
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
-            int new_y = rng.get_int(MIN_Y + 20, MAX_Y);
+            int new_y = rng.get_int(MIN_Y + 20, MAX_Y-20);
             treasure.set_position(new_x, new_y);
 
             score++;
