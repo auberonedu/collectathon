@@ -76,7 +76,8 @@ int main()
     enum class GameState
     {
         MENU,
-        GAME
+        GAME,
+        OVER
     };
     GameState current_state = GameState::MENU;
 
@@ -242,6 +243,18 @@ int main()
                break;
 
             }
+
+            // if statement to check for game over - Anthony
+            if (lifes_left <= 0) 
+            {
+                current_state = GameState::OVER;
+                menu_text_generated = false;
+                
+                player.set_visible(false);
+                treasure.set_visible(false);
+                for(auto& f : followers) f.set_visible(false);
+            }
+
             }
 
             // If the bounding boxes overlap, set the treasure to a new location an increase score
@@ -307,6 +320,38 @@ int main()
                                     lifes_string,
                                     lifes_sprites);
             
+        }
+
+        //a game over state that provides text and option to restart - Anthony
+        else if (current_state == GameState::OVER)
+        {
+            if (!menu_text_generated)
+            {
+                score_sprites.clear();
+                lifes_sprites.clear();
+                boost_sprites.clear();
+        
+                text_generator.set_center_alignment();
+                text_generator.generate(0, -20, "GAME OVER", menu_sprites);
+                text_generator.generate(0, 20, "PRESS A TO RESTART", menu_sprites);
+                menu_text_generated = true; 
+            }
+
+            if (bn::keypad::a_pressed())
+            {
+                lifes_left = 3;
+                score = 0;
+                boost_left = 3;
+                current_state = GameState::MENU;
+                menu_text_generated = false;
+                menu_sprites.clear();
+                
+                player.set_position(PLAYER_X, PLAYER_Y);
+                player.set_visible(true);
+                treasure.set_visible(true);
+                followers.clear();
+                followers.push_back(bn::sprite_items::follower.create_sprite(FOLLOWER_X, FOLLOWER_Y));
+            }
         }
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
