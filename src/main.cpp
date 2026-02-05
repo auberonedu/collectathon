@@ -8,13 +8,29 @@
 #include <bn_sprite_text_generator.h>
 #include <bn_size.h>
 #include <bn_string.h>
+#include <bn_backdrop.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+// body asset
+#include "bn_sprite_items_body.h"
+// start screen background ptr and asset
+#include "bn_regular_bg_items_start_screen.h"
+#include <bn_regular_bg_ptr.h>
+
+#include <bn_sprite_affine_mat_ptr.h>
+#include "bn_sound_items.h"
 
 // Pixels / Frame player moves at
 static constexpr bn::fixed SPEED = 1;
+
+// // Boost speed
+// static constexpr bn::fixed BOOSTED_SPEED = 2;
+
+// // Boost duration
+// static constexpr int BOOST_DURATION_FRAMES = 300;
+// static constexpr int MAX_BOOSTS = 3;
 
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
@@ -26,6 +42,19 @@ static constexpr int MAX_Y = bn::display::height() / 2;
 static constexpr int MIN_X = -bn::display::width() / 2;
 static constexpr int MAX_X = bn::display::width() / 2;
 
+// New Treasure bounds so it doesn't spawn half in half out
+static constexpr int TREASURE_HALF = 4;
+static constexpr int TREASURE_MIN_X = MIN_X + TREASURE_HALF;
+static constexpr int TREASURE_MAX_X = MAX_X - TREASURE_HALF;
+static constexpr int TREASURE_MIN_Y = MIN_Y + TREASURE_HALF;
+static constexpr int TREASURE_MAX_Y = MAX_Y - TREASURE_HALF;
+
+// new starting location for treasure and player
+static constexpr int PLAYER_START_X = -50;
+static constexpr int PLAYER_START_Y = 50;
+static constexpr int TREASURE_START_X = 0;
+static constexpr int TREASURE_START_Y = 0;
+
 // Number of characters required to show the longest numer possible in an int (-2147483647)
 static constexpr int MAX_SCORE_CHARS = 11;
 
@@ -33,9 +62,36 @@ static constexpr int MAX_SCORE_CHARS = 11;
 static constexpr int SCORE_X = 70;
 static constexpr int SCORE_Y = -70;
 
+// Maximum number of Snake Segments including the head
+static constexpr int MAX_SEGMENTS = 64;
+// frames between each position so it looks smooth
+static constexpr int POSITION_STEP_FRAMES = 1;
+
+// Segment spacing
+static constexpr int SEGMENT_SPACING = 8;
+
+// Direction Enum
+enum class Direction
+{
+    NONE,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN
+};
+Direction last_dir = Direction::NONE;
+
+// Self Collision
+bool self_collision = false;
+
 int main()
 {
     bn::core::init();
+    // boolean for title screen
+    bool on_title = true;
+
+    // background screen for the start screen
+    bn::regular_bg_ptr start_bg = bn::regular_bg_items::start_screen.create_bg(0, 0);
 
     bn::random rng = bn::random();
 
@@ -43,32 +99,178 @@ int main()
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
 
+    // Player Sprite and Treasure
+    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_START_X, PLAYER_START_Y);
+    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_START_X, TREASURE_START_Y);
+    player.set_visible(false);
+    treasure.set_visible(false);
+
     int score = 0;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
+    bool gameover_played = false;
+    // int boost_remaining = MAX_BOOSTS;
 
-    while (true)
+    // int boost_duration_counter = 0;
+
+    bn::fixed current_speed = SPEED;
+
+    bn::fixed current_angle = 0;
+
+    bn::fixed dx = 0;
+    bn::fixed dy = 0;
+
+    // affine matrix for our body segments
+    bn::sprite_affine_mat_ptr snake_mat = bn::sprite_affine_mat_ptr::create();
+    player.set_affine_mat(snake_mat);
+
+    // snakes body not including the head
+    bn::vector<bn::sprite_ptr, MAX_SEGMENTS> body_segments;
+    // using vector to store the exisiting position of the head so the body can follow
+    static constexpr int MAX_TAIL_SEGMENTS = MAX_SEGMENTS * 8;
+    bn::vector<bn::fixed_point, MAX_TAIL_SEGMENTS> head_positions;
+    // spacing the body segments along the tail
+    int position_step_counter = 0;
+
+    // Backdrop Color
+    bn::backdrop::set_color(bn::color(25, 23, 20));
+
+    // While statment to show our start_screen before gameplay
+    while (on_title)
     {
-        // Move player with d-pad
-        if (bn::keypad::left_held())
+        if (bn::keypad::start_pressed())
         {
-            player.set_x(player.x() - SPEED);
+            on_title = false;
+            start_bg.set_visible(false);
+            player.set_x(PLAYER_START_X);
+            player.set_y(PLAYER_START_Y);
+            score = 0;
+            last_dir = Direction::NONE;
+            treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
+            // boost_remaining = MAX_BOOSTS;
+            body_segments.clear();
+            head_positions.clear();
+            position_step_counter = 0;
+            self_collision = false;
+            gameover_played = false;
+            player.set_visible(true);
+            treasure.set_visible(true);
         }
-        if (bn::keypad::right_held())
+        bn::core::update();
+    }
+
+    while (!on_title)
+    {
+        // Move player with d-pad (but no diagonal movement allowed (only one button can be pressed at a time))
+        if (bn::keypad::left_pressed() && last_dir != Direction::RIGHT)
         {
-            player.set_x(player.x() + SPEED);
+            dx = -current_speed;
+            dy = 0;
+            last_dir = Direction::LEFT;
+            current_angle = bn::fixed(90);
         }
-        if (bn::keypad::up_held())
+        if (bn::keypad::right_pressed() && last_dir != Direction::LEFT)
         {
-            player.set_y(player.y() - SPEED);
+            dx = current_speed;
+            dy = 0;
+            last_dir = Direction::RIGHT;
+            current_angle = bn::fixed(270);
         }
-        if (bn::keypad::down_held())
+        if (bn::keypad::down_pressed() && last_dir != Direction::UP)
         {
-            player.set_y(player.y() + SPEED);
+            dy = current_speed;
+            dx = 0;
+            last_dir = Direction::DOWN;
+            current_angle = bn::fixed(180);
+        }
+        if (bn::keypad::up_pressed() && last_dir != Direction::DOWN)
+        {
+            dy = -current_speed;
+            dx = 0;
+            last_dir = Direction::UP;
+            current_angle = bn::fixed(0);
         }
 
-        // The bounding boxes of the player and treasure, snapped to integer pixels
+        player.set_x(player.x() + dx);
+        player.set_y(player.y() + dy);
+
+        // // Speed Boost
+        // if (bn::keypad::a_pressed() && (boost_remaining > 0) && (boost_duration_counter == 0))
+        // {
+        //     boost_remaining--;
+        //     boost_duration_counter = BOOST_DURATION_FRAMES;
+        // }
+
+        // current_speed = SPEED;
+        // if (boost_duration_counter > 0)
+        // {
+        //     current_speed = BOOSTED_SPEED;
+        //     boost_duration_counter--;
+        // }
+
+
+        // Wrap player around screen edges
+        if (player.x() < MIN_X)
+        {
+            player.set_x(MAX_X);
+        }
+        else if (player.x() > MAX_X)
+        {
+            player.set_x(MIN_X);
+        }
+
+        if (player.y() < MIN_Y)
+        {
+            player.set_y(MAX_Y);
+        }
+        else if (player.y() > MAX_Y)
+        {
+            player.set_y(MIN_Y);
+        }
+
+        // https://gvaliente.github.io/butano/classbn_1_1fixed__point__t.html
+        // Explained Butano docs found on github pages used for positioning
+        // if statement to keep head at fixed position and add body segments to length of head
+        position_step_counter++;
+        if (position_step_counter >= POSITION_STEP_FRAMES)
+        {
+            position_step_counter = 0;
+
+            bn::fixed_point current_head(player.x().round_integer(), player.y().round_integer());
+
+            // Only shift if head moved
+            if (head_positions.empty() || head_positions[0] != current_head)
+            {
+                if (head_positions.size() < MAX_TAIL_SEGMENTS)
+                {
+                    // push the head vector down by one element
+                    head_positions.push_back(bn::fixed_point());
+                }
+                // push the rest of the body down by one index point
+                for (int i = head_positions.size() - 1; i > 0; --i)
+                {
+                    head_positions[i] = head_positions[i - 1];
+                }
+                // keep our head stored at index 0
+                head_positions[0] = bn::fixed_point(player.x().round_integer(), player.y().round_integer());
+            }
+        }
+
+        // Update body segments to follow the head
+        for (int i = 0; i < body_segments.size(); ++i)
+        {
+            int tail_index = (i + 1) * SEGMENT_SPACING;
+
+            if (tail_index < head_positions.size())
+            {
+                bn::fixed_point curr = head_positions[tail_index];
+                body_segments[i].set_position(curr);
+            }
+        }
+
+        // applying the current_angles from the movement section to player rotation
+        snake_mat.set_rotation_angle_safe(current_angle);
+
+        // The bounding boxes of the player and treasure, snapped to integer pixels and body segments
         bn::rect player_rect = bn::rect(player.x().round_integer(),
                                         player.y().round_integer(),
                                         PLAYER_SIZE.width(),
@@ -78,15 +280,57 @@ int main()
                                           TREASURE_SIZE.width(),
                                           TREASURE_SIZE.height());
 
+        // Check for collision between player (head) and body segments
+        int start_index = 3;
+        for (int i = start_index; i < body_segments.size(); ++i)
+        {
+            bn::rect body_rect = bn::rect(body_segments[i].x().round_integer(),
+                                          body_segments[i].y().round_integer(),
+                                          PLAYER_SIZE.width(),
+                                          PLAYER_SIZE.height());
+            if (player_rect.intersects(body_rect))
+            {
+                self_collision = true;
+                break;
+            }
+        }
+
+        // Reset game if the head collides with the body
+        if (self_collision && !gameover_played)
+        {
+            bn::sound_items::gameover.play();
+            gameover_played = true;
+        } else if (self_collision && gameover_played) {
+            static int gameover_timer = 0;
+            gameover_timer++;
+            if (gameover_timer > 15) {
+                gameover_timer = 0;
+                on_title = true;
+                break;
+            }
+        }
+
         // If the bounding boxes overlap, set the treasure to a new location an increase score
         if (player_rect.intersects(treasure_rect))
         {
             // Jump to any random point in the screen
-            int new_x = rng.get_int(MIN_X, MAX_X);
-            int new_y = rng.get_int(MIN_Y, MAX_Y);
+            int new_x = rng.get_int(TREASURE_MIN_X, TREASURE_MAX_X);
+            int new_y = rng.get_int(TREASURE_MIN_Y, TREASURE_MAX_Y);
             treasure.set_position(new_x, new_y);
+            bn::sound_handle bite_sound = bn::sound_items::bite.play();
 
             score++;
+
+            // Add a new body segment if we have space ( - 1 to account for the head)
+            if (body_segments.size() < MAX_SEGMENTS - 1 && !head_positions.empty())
+            {
+                bn::fixed_point tail_pos = head_positions.back();
+
+                bn::sprite_ptr seg = bn::sprite_items::body.create_sprite(tail_pos.x(), tail_pos.y());
+                seg.set_affine_mat(snake_mat);
+
+                body_segments.push_back(bn::move(seg));
+            }
         }
 
         // Update score display
@@ -100,5 +344,6 @@ int main()
         rng.update();
 
         bn::core::update();
+
     }
 }
