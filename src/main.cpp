@@ -231,6 +231,17 @@ int main()
                 score--;
             }
         }   
+        if (player_rect.intersects(octopus_rect))
+        {
+            bn::sound_items::game_over.play(); // play game over sound
+            
+            score = 0;
+            BOOSTS_LEFT = 3;
+            treasure.set_position(TREASURE_START_X, TREASURE_START_Y);
+            player.set_position(PLAYER_START_X, PLAYER_START_Y);
+            octopus.set_position(OCTOPUS_START_X, OCTOPUS_START_Y);
+        }
+        
 
         // On start press, the game resets and puts everything back to initial state
         if (bn::keypad::start_pressed())
