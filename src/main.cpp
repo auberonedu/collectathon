@@ -26,6 +26,9 @@ static constexpr int COMBO_BONUS = 2;          // score multiplier
 static constexpr int COMBO_X = 0;
 static constexpr int COMBO_Y = -50;
 
+// treasure bobbing animation
+static constexpr bn::fixed BOB_SPEED = 0.05;
+static constexpr bn::fixed BOB_AMOUNT = 3;
 // background decor
 static constexpr int NUM_DECORATIONS = 8;
 // change player color while boosted
@@ -97,6 +100,11 @@ int main()
 
     // background decorations
     bn::vector<bn::sprite_ptr, NUM_DECORATIONS> decorations; 
+
+    // bobbing animation 
+    bn::fixed treasure_bob_offset = 0; // offset for bobbing animation
+    bool treasure_bob_up = true;
+    int treasure_base_y = TREASURE_START_Y; // store base Y position of treasure
     int score = 0;
     int timer_frames = TIMER_MAX_FRAMES;
 
@@ -288,7 +296,24 @@ int main()
             {
                 player.set_y(MIN_Y);
             }
-
+            if (treasure_bob_up)
+            {
+                treasure_bob_offset += BOB_SPEED;
+                if (treasure_bob_offset > BOB_AMOUNT)
+                {
+                    treasure_bob_up = false;
+                }
+            }
+            else
+            {
+                treasure_bob_offset -= BOB_SPEED;
+                if (treasure_bob_offset < -BOB_AMOUNT)
+                {
+                    treasure_bob_up = true;
+                }
+            }
+            treasure.set_y(treasure_base_y + treasure_bob_offset);
+            ++frames_since_last_treasure;
             // DRAGON CHASING LOGIC
             // Calculate direction from dragon to player
             bn::fixed dx = player.x() - dragon.x();
@@ -329,6 +354,7 @@ int main()
                 int new_x = rng.get_int(MIN_X, MAX_X);
                 int new_y = rng.get_int(MIN_Y, MAX_Y);
                 treasure.set_position(new_x, new_y);
+                treasure_base_y = new_y; // update base Y for bobbing
 
                 // combo system
                 int points_earned = 1; // base point
