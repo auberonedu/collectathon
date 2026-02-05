@@ -249,8 +249,6 @@ int main()
             player.set_position(PLAYER_START_X, PLAYER_START_Y);
             octopus.set_position(OCTOPUS_START_X, OCTOPUS_START_Y);
         }
-        
-        }
 
         // On start press, the game resets and puts everything back to initial state
         if (bn::keypad::start_pressed())
