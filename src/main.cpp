@@ -250,6 +250,7 @@ int main()
         }
         /// TIME BOOST LOGIC END////////////////////////////////////////////////////////////////////
 
+        
         // KJeans - boost text
         text_sprites.clear();
         bn::string<32> boost_string("Boosts:");
