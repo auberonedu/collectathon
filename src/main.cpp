@@ -75,7 +75,15 @@ int main()
 
     // Will hold the sprites for the score
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
+    bn::vector<bn::sprite_ptr, 6> score_label_sprites;
+
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+    text_generator.generate(
+        SCORE_X - 50,   
+        SCORE_Y,
+        "Score:",
+        score_label_sprites
+    );
 
     int score = 0;
 
