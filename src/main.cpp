@@ -92,7 +92,16 @@ int main()
     int speed_multiplier = 1;
     int bg_color_index = 0;
     int game_timer = GAME_TIME_FRAMES;
+
+    // will hold the sprite for time
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> timer_sprites = {};
+    bn::vector<bn::sprite_ptr, 5> timer_label_sprites;
+    text_generator.generate(
+        TIMER_X - 43,   
+        TIMER_Y,
+        "Time:",
+        timer_label_sprites
+    );
 
     bn::sprite_ptr player = bn::sprite_items::square.create_sprite(PLAYER_X, PLAYER_Y);
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_X, TREASURE_Y);
