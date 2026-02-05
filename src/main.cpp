@@ -208,40 +208,34 @@ int main()
                                               TREASURE_SIZE.width(),
                                               TREASURE_SIZE.height());
             //loop through followers, used to assign speed and movement to all followers
+
             for (bn::sprite_ptr& f : followers) {
                 bn::rect follower_rect(f.x().round_integer(),
-                                                  f.y().round_integer(),
-                                                  FOLLOWER_SIZE.width(),
-                                                  FOLLOWER_SIZE.height());    
-             
-                                               
+                                    f.y().round_integer(),
+                                    FOLLOWER_SIZE.width(),
+                                    FOLLOWER_SIZE.height());
 
-
-            //Move follower towards player   and subtracts life when follower intersects player                              
-            if (!follower_rect.intersects(player_rect))
-            
-                if (follower_rect.left() < player_rect.left()){
-                    f.set_x(f.x() + follower_speed);
-                }
-                else if (follower_rect.left() > player_rect.left()){
-                    f.set_x(f.x() - follower_speed);
-                }
-                
-                if (follower_rect.top() < player_rect.top()) {
-                    f.set_y(f.y() + follower_speed);
-                }
-                else if (follower_rect.top() > player_rect.top()) {
-                    f.set_y(f.y() - follower_speed);
-
+                if (!follower_rect.intersects(player_rect)) { 
+                    if (follower_rect.left() < player_rect.left()){
+                        f.set_x(f.x() + follower_speed);
+                    }
+                    else if (follower_rect.left() > player_rect.left()){
+                        f.set_x(f.x() - follower_speed);
+                    }
+                    
+                    if (follower_rect.top() < player_rect.top()) {
+                        f.set_y(f.y() + follower_speed);
+                    }
+                    else if (follower_rect.top() > player_rect.top()) {
+                        f.set_y(f.y() - follower_speed);
+                    }
                 }
 
-                //if follower touches player, player lifes decrease by 1
-            if (hurt_cooldown == 0 &&player_rect.intersects(follower_rect) && lifes_left > 0)
-            {
-               --lifes_left;
+                if (hurt_cooldown == 0 && player_rect.intersects(follower_rect) && lifes_left > 0) {
+                --lifes_left;
                 hurt_cooldown = HURT_COOLDOWN_FRAMES;
-               break;
-
+                break; 
+                }
             }
 
             // if statement to check for game over - Anthony
@@ -252,10 +246,9 @@ int main()
                 
                 player.set_visible(false);
                 treasure.set_visible(false);
-                for(auto& f : followers) f.set_visible(false);
+                for(auto& f_ptr : followers) f_ptr.set_visible(false);
             }
 
-            }
 
             // If the bounding boxes overlap, set the treasure to a new location an increase score
             if (player_rect.intersects(treasure_rect))
@@ -296,7 +289,7 @@ int main()
                                     score_string,
                                     score_sprites);
             
-            //increase followers by 1 every time you score
+            //increase followers by 1 every time you scor
             int target_followers = score / 10 + 1;
 
             if (target_followers > followers_spawned + 1)
