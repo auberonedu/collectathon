@@ -63,7 +63,9 @@ We will now artificially trigger a merge conflict. When we follow good git pract
 
 1. Have BOTH Partner A and Partner B edit the below line (here in instructions.md, remembering to switch to edit mode if needed). Each person should make it say something different.
     ```
-    EDIT THIS LINE
+    I'm going to the space
+    I love the world
+
     ```
 1. Have BOTH Partner A and Partner B add, commit, and push the changes. You can refer to the above steps for a refresher on how to add/commit/push. One of the partners will get an error saying that their changes can't be pushed. This is OK and expected. Today we are practicing how to resolve this error.
 1. Have the error partner pull the other partner's changes:
@@ -122,12 +124,15 @@ You will be responsible for making changes to the game. MAKE SURE THAT ALL PARTN
 For each change, first make a plan in instructions.md. Pull, add, commit, push your plan, then implement it. Pull, add, commit and push the implementation. You will be make a lot of commits! This is good! Merge conflicts will likely arise. This is OK and natural. Resolve them as they come up.
 
 Required changes (increasing in difficulty).
-1. Change the speed of the player
-1. Change the backdrop color
+1. Change the speed of the player from 1 to 2
+1. Change the backdrop color from black to red
 1. Change the starting position of the player and dot, making new `static constexpr` for starting X and Y of each
 1. Make it so when the player hits start, the game restarts (the player and treasure are sent back to their initial positions and the score is reset to zero)
-1. Make it so that the player loops around the screen (if they go off the left of the screen, they show up on the right, if they go off the bottom of the screen they show up at the top, etc.)
+-We used start_pressed() method to restart the game.
+1. Make it so that the player loops around the screen (if they go off the left of the screen, they show up on the right, if they go off the bottom of the screen they show up at the top, etc.) 
+(We had it go from left and right and up and down from opposite screens)
 1. Make a speed boost. When the player presses 'A', their speed is increased for a short amount of time. They can only use the speed boost 3 times. They get all speed boosts back when the game is restarted by pressing start.
+- We have used some variables to activate the boost mode, calculated the boost speed when it's affecting. The boost mode will be affecting for 60 which is considered as 1 sec each time. 
 
 Again, ALL PARTNERS SHOULD BE ADDING COMMITING AND PUSHING FREQUENTLY.
 
@@ -147,7 +152,7 @@ Again, ALL PARTNERS SHOULD BE ADDING COMMITING AND PUSHING FREQUENTLY.
 ### Making changes
 1. Now, choose someting SMALL that you can feasibly change given your current skillset and the amount of time you have now. Start with something really small!
 1. Make a concrete plan of how you'll do this small change in planning.md. Pull, add, commit, push.
-1. Do the change! It's OK to change your plan if you run into challenges or realize what you decided to do was too big.
+1. Do the change! It's OK to change your plan if you run into challenges or realize what you decided to do was too big. 
 1. Make sure to be testing your game throughout by compiling it and playing it.
 1. Pull, add commit push continously! You feature doesn't need to be finished to be making a commit. Just each time you're making some piece of progress.
 
