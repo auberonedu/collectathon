@@ -41,7 +41,7 @@ static constexpr int OBSTACLE_Y = 0;
 // Width and height of the the player and treasure bounding boxes
 static constexpr bn::size PLAYER_SIZE = {8, 8};
 static constexpr bn::size TREASURE_SIZE = {8, 8};
-static constexpr bn::size OBSTACLE_SIZE = {8, 8};
+static constexpr bn::size OBSTACLE_SIZE = {16, 16};
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
