@@ -111,8 +111,8 @@ int main()
     bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(TREASURE_X, TREASURE_Y);
     bn::sprite_ptr obstacle = bn::sprite_items::square.create_sprite(OBSTACLE_X, OBSTACLE_Y);
 
-    while (true)
-    {
+    while (true) {
+        
         if (game_over){
             // Clear old gameplay text
             score_sprites.clear();
