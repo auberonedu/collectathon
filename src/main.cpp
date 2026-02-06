@@ -25,12 +25,12 @@ static constexpr int TIMER_X = -70;
 static constexpr int TIMER_Y = -70;
 // some colors for changing backdeop
 static constexpr bn::color BG_COLORS[] = {
-    bn::color(31, 0, 0),  // red
+    bn::color(4, 4, 6),  // blue-grey
     bn::color(16, 0, 16), // purple
-    bn::color(0, 0, 31),  // blue
+    bn::color(7, 10, 7),  // forest green
     bn::color(18, 9, 3),  // brown
-    bn::color(0, 31, 31), // cyan
-    bn::color(31, 0, 31), // magenta
+    bn::color(3, 3, 8), // dark blue
+    bn::color(9, 7, 5), // dusty brow
 };
 static constexpr int BG_COLOR_COUNT = 6;
 
