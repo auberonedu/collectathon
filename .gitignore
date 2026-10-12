@@ -23,7 +23,7 @@
 *.dll
 
 # Fortran module files
-*.mod
+#*.mod
 *.smod
 
 # Compiled Static libraries
@@ -53,3 +53,12 @@ build
 
 # JSON hint for site
 /rom.json
+
+#VS Code ol
+.vscode
+
+#graphics
+snake.aseprite
+snek.bmp
+snek.json
+snek.aseprite
