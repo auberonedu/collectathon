@@ -8,17 +8,35 @@
 #include <bn_sprite_text_generator.h>
 #include <bn_size.h>
 #include <bn_string.h>
+#include <bn_backdrop.h>
+#include <bn_color.h>
 
 #include "bn_sprite_items_dot.h"
 #include "bn_sprite_items_square.h"
 #include "common_fixed_8x16_font.h"
+#include "bn_sprite_items_alien.h"
+#include "bn_sprite_items_moon.h"
+#include "bn_sprite_items_asteroid.h"
+// #include "bn_sprite_items_variable_8x16_font_red.h"
+ 
 
 // Pixels / Frame player moves at
-static constexpr bn::fixed SPEED = 1;
+static constexpr bn::fixed SPEED = 3;
+static constexpr bn::fixed new_speed = SPEED + 2;
 
 // Width and height of the the player and treasure bounding boxes
-static constexpr bn::size PLAYER_SIZE = {8, 8};
-static constexpr bn::size TREASURE_SIZE = {8, 8};
+static constexpr bn::size PLAYER_SIZE = {16, 16};
+static constexpr bn::size MOON_SIZE = {16, 16};
+static constexpr bn::size ASTEROID_SIZE ={8,8};
+
+// changing player and treasure position
+static constexpr int alien_x = 50;
+static constexpr int alien_y = -30;
+static constexpr int moon_x = -30;
+static constexpr int moon_y = 20;
+
+static constexpr int asteroid_x=-20;
+static constexpr int asteroid_y=40;
 
 // Full bounds of the screen
 static constexpr int MIN_Y = -bn::display::height() / 2;
@@ -28,73 +46,253 @@ static constexpr int MAX_X = bn::display::width() / 2;
 
 // Number of characters required to show the longest numer possible in an int (-2147483647)
 static constexpr int MAX_SCORE_CHARS = 11;
+static constexpr int MAX_SPEED_BOOST_CHARS = 11;
+static constexpr int BOOST_FLASH = 11;
 
-// Score location
-static constexpr int SCORE_X = 70;
+// Score and boost location
+static constexpr int SCORE_X = 63;
 static constexpr int SCORE_Y = -70;
+
+static constexpr int SPEEDCOUNT_X = 63;
+static constexpr int SPEEDCOUNT_Y = -60;
+// asteroid speed
+static constexpr int ASTEROID_SPEED=2;
 
 int main()
 {
     bn::core::init();
+    // backdrop color
+    bn::backdrop::set_color(bn::color(30, 15, 0));
 
     bn::random rng = bn::random();
 
-    // Will hold the sprites for the score
+    // Will hold the sprites for the score, boost word, and speed boost count
     bn::vector<bn::sprite_ptr, MAX_SCORE_CHARS> score_sprites = {};
+    bn::vector<bn::sprite_ptr, BOOST_FLASH> boost_word = {};
+    bn::vector<bn::sprite_ptr, MAX_SPEED_BOOST_CHARS> speed_boosts = {};
     bn::sprite_text_generator text_generator(common::fixed_8x16_sprite_font);
+    bn::vector<bn::sprite_ptr,40> game_over_text;
+    // bn::sprite_text_generator text_generator(common::fixed_32x64_sprite_font.h);
 
     int score = 0;
+    int timer = 0;
+    int speed_boost_count = 3;
+    bool speed_boost_activate = false;
+    bool game_over=false;
 
-    bn::sprite_ptr player = bn::sprite_items::square.create_sprite(-50, 50);
-    bn::sprite_ptr treasure = bn::sprite_items::dot.create_sprite(0, 0);
-
+    bn::sprite_ptr alien = bn::sprite_items::alien.create_sprite(alien_x, alien_y);
+    bn::sprite_ptr moon = bn::sprite_items::moon.create_sprite(moon_x, moon_y);
+    bn::sprite_ptr asteroid = bn::sprite_items::asteroid.create_sprite(asteroid_x, asteroid_y);
+    
     while (true)
     {
+        
+
         // Move player with d-pad
+
         if (bn::keypad::left_held())
         {
-            player.set_x(player.x() - SPEED);
+            if (speed_boost_activate)
+            {
+                alien.set_x(alien.x() - new_speed);
+            }
+            else
+            {
+                alien.set_x(alien.x() - SPEED);
+            }
         }
+
         if (bn::keypad::right_held())
         {
-            player.set_x(player.x() + SPEED);
+            if (speed_boost_activate)
+            {
+                alien.set_x(alien.x() + new_speed);
+            }
+            else
+            {
+                alien.set_x(alien.x() + SPEED);
+            }
         }
+
         if (bn::keypad::up_held())
         {
-            player.set_y(player.y() - SPEED);
+
+            if (speed_boost_activate)
+            {
+                alien.set_y(alien.y() - new_speed);
+            }
+            else
+            {
+                alien.set_y(alien.y() - SPEED);
+            }
         }
+
         if (bn::keypad::down_held())
         {
-            player.set_y(player.y() + SPEED);
+            if (speed_boost_activate)
+            {
+                alien.set_y(alien.y() + new_speed);
+            }
+            else
+            {
+                alien.set_y(alien.y() + SPEED);
+            }
+        }
+        
+        // Restarting game///
+        if (bn::keypad::start_pressed())
+        {
+            game_over=false;
+            game_over_text.clear();
+            score = 0;
+            speed_boost_count = 3;
+            timer = 0;
+            speed_boost_activate = false;
+            alien.set_position(alien_x, alien_y);
+            moon.set_position(moon_x, moon_y);
+            asteroid.set_position(MAX_X,rng.get_int(MIN_Y,MAX_Y));
+            boost_word.clear();
+            alien.set_rotation_angle(0);
+            bn::backdrop::set_color(bn::color(30, 15, 0));
+        }
+        // stops game if asteroid collides with player
+        if(game_over){
+
+        bn::core::update();
+        continue;
+                     }
+        // speed changed when a is pressed
+        if (bn::keypad::a_pressed() && speed_boost_count > 0)
+        {
+            text_generator.generate(0, 0, "BOOST!", boost_word);
+            timer = 0;
+            speed_boost_activate = true;
+            speed_boost_count--;
+
+            // changing backdrop colors when boost is active
+            // will randomly generate between theses colors
+            int color = rng.get_int(0, 4);
+            if (color == 0)
+            {
+                // pink
+                bn::backdrop::set_color(bn::color(31, 3, 18));
+            }
+            else if (color == 1)
+            {
+                // bright blue
+                bn::backdrop::set_color(bn::color(0, 31, 31));
+            }
+            else if (color == 2)
+            {
+                // blue
+                bn::backdrop::set_color(bn::color(0, 15, 31));
+            }
+            else if (color == 3)
+            {
+                // purple
+                bn::backdrop::set_color(bn::color(20, 0, 31));
+            }
+        }
+        // speed boost timer/
+        if (speed_boost_activate)
+        {
+            timer++;
+            alien.set_rotation_angle(25);
+            // once timer is done
+            if (timer >= 300)
+            {
+                speed_boost_activate = false;
+                boost_word.clear();
+                timer = 0;
+                alien.set_rotation_angle(0);
+                bn::backdrop::set_color(bn::color(30, 15, 0));
+            }
         }
 
+        // the asteroid will move to the left
+        asteroid.set_x(asteroid.x()-ASTEROID_SPEED);
+        if(asteroid.x()< MIN_X){
+            asteroid.set_x(MAX_X);
+            asteroid.set_y(rng.get_int(MIN_Y,MAX_Y));
+        }
+
+      
+
+        // .x returns the horizontal position of the sprite
+        // If the sprite moves to the left, it will come back to the right.
+        if (alien.x() < MIN_X)
+        {
+            // .set_x sets the horizontal position of the sprite
+            // just using the max/min/ already available
+            alien.set_x(MAX_X);
+        }
+
+        // if sprite moves to the right, it will come back on the left
+        if (alien.x() > MAX_X)
+        {
+            alien.set_x(MIN_X);
+        }
+        // if sprite goes up,will show up again at the bottom
+        // .y returns the vertical position of the sprite
+        if (alien.y() < MIN_Y)
+        {
+            // .set_y will set the vertical position of the sprite
+            alien.set_y(MAX_Y);
+        }
+        // if sprite goes down it will come back from top of screen
+        if (alien.y() > MAX_Y)
+        {
+            alien.set_y(MIN_Y);
+        }
         // The bounding boxes of the player and treasure, snapped to integer pixels
-        bn::rect player_rect = bn::rect(player.x().round_integer(),
-                                        player.y().round_integer(),
+        bn::rect player_rect = bn::rect(alien.x().round_integer(),
+                                        alien.y().round_integer(),
                                         PLAYER_SIZE.width(),
                                         PLAYER_SIZE.height());
-        bn::rect treasure_rect = bn::rect(treasure.x().round_integer(),
-                                          treasure.y().round_integer(),
-                                          TREASURE_SIZE.width(),
-                                          TREASURE_SIZE.height());
+        bn::rect moon_rect = bn::rect(moon.x().round_integer(),
+                                          moon.y().round_integer(),
+                                          MOON_SIZE.width(),
+                                          MOON_SIZE.height());
 
+        // detects asteroid collision
+        bn::rect asteroid_rect=bn::rect(asteroid.x().round_integer(),
+                                                    asteroid.y().round_integer(),
+                                                ASTEROID_SIZE.width(),
+                                                    ASTEROID_SIZE.height());
         // If the bounding boxes overlap, set the treasure to a new location an increase score
-        if (player_rect.intersects(treasure_rect))
+        if (player_rect.intersects(moon_rect))
         {
             // Jump to any random point in the screen
             int new_x = rng.get_int(MIN_X, MAX_X);
             int new_y = rng.get_int(MIN_Y, MAX_Y);
-            treasure.set_position(new_x, new_y);
+            moon.set_position(new_x, new_y);
 
             score++;
+        }   
+        // checking if alien and asteroid collide. 
+        if(player_rect.intersects(asteroid_rect)){
+            // ends game if they collide
+            game_over=true;
+            // displays text
+            text_generator.generate(-40,0,"GAME OVER", game_over_text);
+            text_generator.generate(-100,20,"PRESS START TO PLAY AGAIN", game_over_text);
+
         }
 
         // Update score display
-        bn::string<MAX_SCORE_CHARS> score_string = bn::to_string<MAX_SCORE_CHARS>(score);
+        bn::string<MAX_SCORE_CHARS> score_string = "SCORE:";
+        score_string += bn::to_string<MAX_SCORE_CHARS>(score);
         score_sprites.clear();
         text_generator.generate(SCORE_X, SCORE_Y,
                                 score_string,
                                 score_sprites);
+
+        bn::string<MAX_SPEED_BOOST_CHARS> speedboost_string = "BOOST:";
+        speedboost_string += bn::to_string<MAX_SPEED_BOOST_CHARS>(speed_boost_count);
+        speed_boosts.clear();
+        text_generator.generate(SPEEDCOUNT_X, SPEEDCOUNT_Y,
+                                speedboost_string,
+                                speed_boosts);
 
         // Update RNG seed every frame so we don't get the same sequence of positions every time
         rng.update();
