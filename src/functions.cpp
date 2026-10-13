@@ -1,0 +1,39 @@
+#include "functions.hpp"
+#include "Level.hpp"
+
+void level_plus(Level &level)
+{
+    // This casts the enum first into an integer and increases it by one,
+    // then casts it back into an enum
+    level = static_cast<Level>(static_cast<int>(level) + 1);
+}
+
+void update_timer(int &timer, int &seconds)
+{
+    // Increases seconds elapsed by taken advantage of the 60 cycles per second the GBA runs on
+    if (timer >= 60)
+    {
+        seconds++;
+        timer = 0;
+    }
+    // Updates tick count
+    timer++;
+}
+
+void update_timer_decrement(int &timer, int &seconds)
+{
+    // Decreases time remaining by taken advantage of the 60 cycles per second the GBA runs on
+    if (timer >= 60)
+    {
+        seconds--;
+        timer = 0;
+    }
+    // Updates tick count
+    timer++;
+}
+
+void reset_timer(int &timer, int &seconds)
+{
+    timer = 0;
+    seconds = 0;
+}
