@@ -31,17 +31,13 @@ jobs:
 
             make -j
 
-            # Find the ROM (Butano emits exactly one .gba)
             ROM="$(ls -1 *.gba | head -n 1)"
 
-            # Prepare publish directory
             rm -rf site
             mkdir site
 
-            # Copy site assets from repo root
             cp index.html startEmu.js style.css site/
 
-            # Copy ROM and generate rom.json
             cp "$ROM" "site/$ROM"
             printf '{ "rom": "%s" }\n' "$ROM" > site/rom.json
 
