@@ -63,8 +63,11 @@ We will now artificially trigger a merge conflict. When we follow good git pract
 
 1. Have BOTH Partner A and Partner B edit the below line (here in instructions.md, remembering to switch to edit mode if needed). Each person should make it say something different.
     ```
-    EDIT THIS LINE
-    ```
+<<<<<<< HEAD
+    
+    
+>>>>>>> 51e39d2029d6cb7b8313b702505ba668071d6ed8
+    ```Angie was here. More Meaningful Text. Please don't break
 1. Have BOTH Partner A and Partner B add, commit, and push the changes. You can refer to the above steps for a refresher on how to add/commit/push. One of the partners will get an error saying that their changes can't be pushed. This is OK and expected. Today we are practicing how to resolve this error.
 1. Have the error partner pull the other partner's changes:
     ```
@@ -121,10 +124,10 @@ You will be responsible for making changes to the game. MAKE SURE THAT ALL PARTN
 For each change, first make a plan in instructions.md. Pull, add, commit, push your plan, then implement it. Pull, add, commit and push the implementation. You will be make a lot of commits! This is good! Merge conflicts will likely arise. This is OK and natural. Resolve them as they come up.
 
 Required changes (increasing in difficulty).
-1. Change the speed of the player
-1. Change the backdrop color
-1. Change the starting position of the player and dot, making new `static constexpr` for starting X and Y of each
-1. Make it so when the player hits start, the game restarts (the player and treasure are sent back to their initial positions and the score is reset to zero)
+1. Change the speed of the player (Angie)
+1. Change the backdrop color (K)
+1. Change the starting position of the player and dot, making new `static constexpr` for starting X and Y of each (K)
+1. Make it so when the player hits start, the game restarts (the player and treasure are sent back to their initial positions and the score is reset to zero) 
 1. Make it so that the player loops around the screen (if they go off the left of the screen, they show up on the right, if they go off the bottom of the screen they show up at the top, etc.)
 1. Make a speed boost. When the player presses 'A', their speed is increased for a short amount of time. They can only use the speed boost 3 times. They get all speed boosts back when the game is restarted by pressing start.
 
